@@ -1,40 +1,40 @@
-# SPIDER SENSE — 60-Second Judge Demonstration Playbook
+# SPIDER SENSE — Judge Demonstration Playbook
 
-This guide outlines the optimal demonstration flow for hackathon judges to verify all core capabilities of **SPIDER SENSE (PS-01)** in under 60 seconds.
-
----
-
-## 🕒 The 60-Second Judge Flow
-
-```
-[00:00 - 00:15] Hook & Problem Context (The SEBI 89% Retail Loss Asymmetry)
-       ↓
-[00:15 - 00:30] Live Multi-Agent Cockpit (Moving Tick Chart + 4 Independent Agents + RAG)
-       ↓
-[00:30 - 00:45] Head-to-Head Investment Duel (Side-by-Side 2 Stocks Comparison)
-       ↓
-[00:45 - 00:60] System Resilience & Degraded Data (Zero-Hallucination & Retail Traps)
-```
+This guide outlines the optimal demonstration flow for hackathon judges to verify all core capabilities of **SPIDER SENSE (PS-01)**.
 
 ---
 
-## Step 1: Hook the Judges (00:00 - 00:15)
+## 🎯 The Judge Demonstration Flow
+
+```
+Step 1: Hook & Problem Context (The SEBI 89% Retail Loss Asymmetry)
+   ↓
+Step 2: Live Multi-Agent Cockpit (Moving Tick Chart + 4 Independent Agents + RAG)
+   ↓
+Step 3: Head-to-Head Investment Duel (Side-by-Side 2 Stocks Comparison)
+   ↓
+Step 4: System Resilience & Degraded Data (Zero-Hallucination & Retail Traps)
+```
+
+---
+
+## Step 1: Hook the Judges
 **Say this:**
 > *"Judges, official SEBI study reveals that 89% of retail F&O traders in India lose money. The failure isn't lack of data — NSE ticks, corporate filings, and institutional flows are public. It's an infrastructure gap: hedge funds have parallel multi-analyst teams synthesizing petabytes in seconds, while retail investors get Telegram tips and a price chart.*  
 > *We built **SPIDER SENSE**: an autonomous multi-agent financial intelligence system that brings hedge-fund multi-perspective reasoning to retail investors in real time."*
 
 ---
 
-## Step 2: The End-to-End Multi-Agent Cockpit (00:15 - 00:30)
+## Step 2: The End-to-End Multi-Agent Cockpit
 **Action:**
 Show the live **Cockpit & 4 Agents** view.
 
 **Point to the screen:**
 1. **Live Moving Tick Chart**:
-   - Continuously streaming NSE ticks with overlaid 20-day EMA strictly bound to real-time timestamps (no future hours).
+   - Continuously streaming ticks with overlaid 20-day EMA strictly bound to real-time timestamps.
 2. **The Web Mind Master Synthesis**:
    - Synthesized recommendation: **"GRADUAL STAGGERED ACCUMULATION (SIP)"**.
-   - Execution latency: **~29 milliseconds** (measured runtime latency, beating the 60s requirement).
+   - Execution latency: **~29 milliseconds** (measured sub-second runtime latency).
    - Tailored decision rationale answering the 5 core investor questions.
 3. **The 4 Specialized Agents Executing in Parallel**:
    - **Market Spider**: 3 independent dimensions (Price Momentum, Volume Surge 1.61x, Oscillators).
@@ -44,7 +44,7 @@ Show the live **Cockpit & 4 Agents** view.
 
 ---
 
-## Step 3: Head-to-Head Investment Duel (00:30 - 00:45)
+## Step 3: Head-to-Head Investment Duel
 **Action:**
 Click the **"Compare 2 Stocks"** tab in the top navigation.
 Select **Asset A** (e.g. `TATAMOTORS`) and **Asset B** (e.g. `RELIANCE`), then click **"Compare Now"**.
@@ -56,7 +56,7 @@ Select **Asset A** (e.g. `TATAMOTORS`) and **Asset B** (e.g. `RELIANCE`), then c
 
 ---
 
-## Step 4: System Resilience & Degraded-Data Stress Testing (00:45 - 00:60)
+## Step 4: System Resilience & Degraded-Data Stress Testing
 **Action:**
 Click the **"Stress Testing"** tab and click **⚡ Conflict (Retail Trap)** or **⚠ Missing SEBI Filing**.
 

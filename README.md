@@ -121,6 +121,7 @@ python -m tests.test_end_to_end
 ---
 
 ## 7. Documentation Directory
+- **[DEPLOYMENT.md](DEPLOYMENT.md)**: Production cloud deployment guide and hosting configurations.
 - **[REQUIREMENTS.md](REQUIREMENTS.md)**: Requirement Traceability Matrix mapping PS-01 items to files and tests.
 - **[FINAL_AUDIT.md](FINAL_AUDIT.md)**: 35-point release gate audit report.
 - **[ARCHITECTURE.md](ARCHITECTURE.md)**: In-depth technical architecture and system design.
@@ -128,7 +129,7 @@ python -m tests.test_end_to_end
 - **[RAG.md](RAG.md)**: Semantic RAG retrieval pipeline and regulatory corpus specifications.
 - **[DATA_SOURCES.md](DATA_SOURCES.md)**: Data integrity, 3-state data policy, and validation rules.
 - **[DECISIONS.md](DECISIONS.md)**: Key architectural decisions and trade-off records.
-- **[DEMO.md](DEMO.md)**: 60-second judge demonstration walkthrough script.
+- **[DEMO.md](DEMO.md)**: Judge demonstration walkthrough playbook.
 - **[TESTING.md](TESTING.md)**: Test verification suite methodology and execution logs.
 
 ---

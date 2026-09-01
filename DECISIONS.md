@@ -5,9 +5,9 @@
 ---
 
 ## 1. Decision 1: Parallel ThreadPool vs Sequential Agent Execution
-- **Context**: Hackathon guidelines and low-latency retail requirements demand multi-agent synthesis in under 60 seconds.
+- **Context**: Real-time retail decision requirements demand high-throughput multi-agent synthesis with minimal round-trip latency.
 - **Decision**: Implemented `ThreadPoolExecutor(max_workers=4)` inside `WebMindOrchestrator` to execute Market Spider, Fundamental Web (RAG), Sentiment Spider, and Risk Guardian concurrently.
-- **Outcome**: Total pipeline execution latency dropped from ~110ms to **~34ms**, easily exceeding the 60-second SLA while measuring real runtime latency.
+- **Outcome**: Total pipeline execution latency dropped from ~110ms to **~34ms** sub-second response while measuring real runtime latency.
 
 ---
 
