@@ -18,29 +18,24 @@
 
 ---
 
-## 3. Verified Cloud Hosting Providers
+> **Sprint 1 Submission Note**: In accordance with the HackVerse Handbook, public cloud deployment is **optional** for Sprint 1. The official submission entry for deployment is **N/A**. This guide documents the production architecture and one-click cloud deployment specifications.
 
-### Option A: Render.com (Recommended Free Cloud Hosting)
-1. Go to [https://dashboard.render.com/web/new](https://dashboard.render.com/web/new)
-2. Connect your GitHub repository: `https://github.com/niteeshk-2009/HackVerse-PS01`
-3. Configure settings:
-   - **Name**: `spider-sense`
-   - **Runtime**: `Python 3`
+---
+
+## 3. Production Cloud Hosting Options
+
+### Option A: Render.com
+1. Connect repository: `https://github.com/niteeshk-2009/HackVerse-PS01`
+2. Render detects `render.yaml` or `Procfile` automatically:
+   - **Runtime**: Python 3
    - **Build Command**: `pip install -r requirements.txt`
    - **Start Command**: `python run.py`
-   - **Plan**: `Free`
-4. Click **Create Web Service**.
-5. Render deploys your app with an automatic public HTTPS URL:
-   `https://spider-sense.onrender.com` (or your custom service name).
+3. Deploys with automatic TLS/HTTPS.
 
-### Option B: Railway.app / Koyeb
+### Option B: Railway.app / Koyeb / Docker
 1. Connect repository `https://github.com/niteeshk-2009/HackVerse-PS01`.
-2. Railway detects the `Procfile` / `Dockerfile` automatically.
-3. Generates a public HTTPS URL: `https://hackverse-ps01.up.railway.app`.
-
-### Option C: Instant Standalone Deployment (GitHub Pages)
-- **Live URL**: [https://niteeshk-2009.github.io/HackVerse-PS01/](https://niteeshk-2009.github.io/HackVerse-PS01/)
-- Pre-compiled full-state client simulation for all 20 equities (14 Indian + 6 Foreign), 4-agent synthesis, and live chart streams.
+2. Automatically detects `Dockerfile` or `Procfile`.
+3. Binds dynamically to container `$PORT`.
 
 ---
 

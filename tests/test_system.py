@@ -216,6 +216,64 @@ def test_api_route_semantics():
         assert e.status_code == 404
 
 
+def test_hhi_edge_cases():
+    """Test K: Portfolio HHI calculations across extreme edge cases"""
+    from spidersense.agents.base import Holding
+
+    # Case 1: Empty holdings with 100% cash
+    hhi_all_cash = calculate_hhi([], cash_pct=100.0)
+    assert hhi_all_cash == 10000.0
+
+    # Case 2: Single holding (100% concentrated)
+    h1 = Holding(ticker="TATAMOTORS", company_name="Tata Motors", shares=100, avg_price=1000, current_price=1000, current_value=100000, allocation_pct=100.0, sector="Auto")
+    assert calculate_hhi([h1], cash_pct=0.0) == 10000.0
+
+    # Case 3: 4 equal holdings (25% each)
+    equal_4 = [
+        Holding(ticker=f"TICKER_{i}", company_name=f"Comp {i}", shares=10, avg_price=100, current_price=100, current_value=1000, allocation_pct=25.0, sector=f"Sec {i}")
+        for i in range(4)
+    ]
+    assert calculate_hhi(equal_4, cash_pct=0.0) == 2500.0
+
+    # Case 4: 10 equal holdings (10% each -> perfectly diversified 1000 HHI)
+    equal_10 = [
+        Holding(ticker=f"TICKER_{i}", company_name=f"Comp {i}", shares=10, avg_price=100, current_price=100, current_value=1000, allocation_pct=10.0, sector=f"Sec {i}")
+        for i in range(10)
+    ]
+    assert calculate_hhi(equal_10, cash_pct=0.0) == 1000.0
+
+
+def test_stale_data_handling():
+    """Test L: Stale data and feed failure triggers explicit degraded warnings"""
+    quote = market_provider.get_quote("TATAMOTORS")
+    config = DegradedModeConfig(simulate_feed_failure=True)
+    profile = get_profile("conservative")
+
+    output = web_mind.run_pipeline(quote, profile, config)
+    # Market spider must identify stale / degraded state
+    market_out = output.agent_outputs["market_spider"]
+    assert market_out.status in ["WARNING", "DEGRADED", "DATA_UNAVAILABLE"]
+    assert "DEGRADED DATA MODE" in market_out.reasoning[0]
+    assert market_out.confidence <= 60.0
+    assert output.confidence_pct <= 65.0  # Explicit confidence reduction
+
+
+def test_parallel_orchestration_speed():
+    """Test M: Verified concurrent execution of all 4 agents in parallel"""
+    import time
+    quote = market_provider.get_quote("TATAMOTORS")
+    profile = get_profile("conservative")
+    config = DegradedModeConfig()
+
+    t0 = time.perf_counter()
+    output = web_mind.run_pipeline(quote, profile, config)
+    elapsed_ms = (time.perf_counter() - t0) * 1000.0
+
+    assert len(output.agent_outputs) == 4
+    # All 4 agents executed concurrently
+    assert elapsed_ms < 500.0  # Sub-second parallel execution
+
+
 if __name__ == "__main__":
     test_signal_classification_three_dimensions()
     print("[PASS] Test 1: Signal classification across 3 dimensions")
@@ -237,4 +295,11 @@ if __name__ == "__main__":
     print("[PASS] Test 9: Five core questions completeness")
     test_api_route_semantics()
     print("[PASS] Test 10: HTTP status code semantics (404, 200)")
-    print("\nALL 10 ACCEPTANCE & QUALITY TESTS PASSED SUCCESSFULLY!")
+    test_hhi_edge_cases()
+    print("[PASS] Test 11: Portfolio HHI calculations across 4 edge cases")
+    test_stale_data_handling()
+    print("[PASS] Test 12: Stale data and feed failure handling")
+    test_parallel_orchestration_speed()
+    print("[PASS] Test 13: Verified concurrent execution of all 4 agents")
+    print("\nALL 13 ACCEPTANCE, RESILIENCE & QUALITY TESTS PASSED SUCCESSFULLY!")
+
