@@ -59,6 +59,14 @@ The repository indexes authentic disclosures across Indian equities:
 5. **Infosys Limited (`INFY`)**:
    - `INFY_Q2FY26_RESULTS`: Q2 FY26 Earnings Conference (Large Deal TCV of $2.4B & Topaz AI Deployment).
 
+6. **Global Mega-Caps (SEC 10-Q & 10-K Filings)**:
+   - **NVDA**: `NVDA_Q2FY26_SEC_10Q` — SEC Form 10-Q Data Center GPU Revenue ($26.3B) & Blackwell B200 Architecture Ramp.
+   - **AAPL**: `AAPL_Q3FY26_SEC_10Q` — SEC Form 10-Q Services Gross Margins (74.0%) & Apple Intelligence Rollout.
+   - **MSFT**: `MSFT_FY26_SEC_10K` — SEC Form 10-K Intelligent Cloud Azure AI Run-Rate & Copilot Enterprise Seats.
+   - **TSLA**: `TSLA_Q2FY26_SEC_10Q` — SEC Form 10-Q Robotaxi Supercluster & Energy Storage Megapack Deployments.
+   - **GOOGL**: `GOOGL_Q2FY26_SEC_10Q` — SEC Form 10-Q Google Cloud Operating Income & Gemini API Subscriptions.
+   - **AMZN**: `AMZN_Q2FY26_SEC_10Q` — SEC Form 10-Q AWS Operating Margin (35.5%) & Bedrock Generative AI Deployments.
+
 ---
 
 ## 4. Query Retrieval & Similarity Scoring

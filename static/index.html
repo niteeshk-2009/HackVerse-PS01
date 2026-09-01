@@ -167,14 +167,21 @@
     <div class="max-w-7xl mx-auto flex items-center gap-3">
       
       <!-- Quick Search Input -->
-      <div class="relative w-48 sm:w-56 flex-shrink-0">
+      <div class="relative w-36 sm:w-44 flex-shrink-0">
         <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
         <input type="text" id="watchlist-search" placeholder="Search stocks..." class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 dark:bg-spidey-card border border-gwen-border dark:border-spidey-border text-xs text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition font-mono">
       </div>
 
-      <!-- Ticker Horizontal Carousel (All Groww Companies) -->
+      <!-- Market Region Filter Tabs -->
+      <div class="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl flex-shrink-0 text-[11px] font-mono font-bold">
+        <button id="market-filter-all" onclick="setMarketFilter('ALL')" class="px-2.5 py-1 rounded-lg bg-white dark:bg-spidey-blue/20 text-gwen-pink dark:text-spidey-blue shadow-sm transition">All</button>
+        <button id="market-filter-in" onclick="setMarketFilter('IN')" class="px-2.5 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">🇮🇳 NSE</button>
+        <button id="market-filter-us" onclick="setMarketFilter('US')" class="px-2.5 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">🇺🇸 US / Global</button>
+      </div>
+
+      <!-- Ticker Horizontal Carousel -->
       <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5" id="groww-watchlist-container">
-        <!-- Injected via JavaScript: TATAMOTORS, RELIANCE, HDFCBANK, ICICIBANK, INFY, TCS, ZOMATO, SBIN, BHARTIARTL, ITC, BAJFINANCE, LT, MARUTI, SUNPHARMA -->
+        <!-- Injected via JavaScript -->
       </div>
     </div>
   </div>
@@ -202,7 +209,7 @@
                 <span class="text-xs px-2 py-0.5 rounded font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" id="stock-ticker">TATAMOTORS</span>
                 <span class="text-xs text-slate-400" id="stock-sector">Automobile</span>
               </div>
-              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">NSE Live Real-Time Stream</p>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono" id="stock-exchange-label">NSE Live Real-Time Stream</p>
             </div>
 
             <div class="text-right">
@@ -765,6 +772,7 @@
     let livePriceVal = 1048.50;
     let watchlist = [];
     let activeUser = null;
+    let currentStockCurrency = "INR";
 
     document.addEventListener("DOMContentLoaded", async () => {
       initToggleSwitch();
@@ -879,16 +887,66 @@
     }
 
     // =========================================================================
-    // 3. WATCHLIST (ALL GROWW EQUITIES WITH LIVE SEARCH)
+    // 3. WATCHLIST (ALL EQUITIES WITH REGIONAL FILTERS & SEARCH)
     // =========================================================================
+    let currentMarketFilter = "ALL"; // "ALL", "IN", "US"
+
+    function setMarketFilter(filter) {
+      currentMarketFilter = filter;
+      const ids = {
+        'ALL': 'market-filter-all',
+        'IN': 'market-filter-in',
+        'US': 'market-filter-us'
+      };
+      Object.keys(ids).forEach(k => {
+        const btn = document.getElementById(ids[k]);
+        if (btn) {
+          if (k === filter) {
+            btn.className = "px-2.5 py-1 rounded-lg bg-white dark:bg-spidey-blue/20 text-gwen-pink dark:text-spidey-blue shadow-sm transition";
+          } else {
+            btn.className = "px-2.5 py-1 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition";
+          }
+        }
+      });
+      filterAndRenderWatchlist();
+    }
+
+    function formatPrice(price, currency) {
+      if (currency === "USD") {
+        return `$${Number(price).toFixed(2)}`;
+      }
+      return `₹${Number(price).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    }
+
+    function formatChange(change, currency) {
+      const isPos = change >= 0;
+      const sym = currency === "USD" ? "$" : "₹";
+      return `${isPos ? '+' : ''}${sym}${Math.abs(change).toFixed(2)}`;
+    }
+
     async function loadWatchlist() {
       try {
         const res = await fetch("/api/watchlist");
         watchlist = await res.json();
-        renderWatchlist(watchlist);
+        filterAndRenderWatchlist();
+        initCompareDropdowns();
       } catch (err) {
         console.error("Watchlist load error:", err);
       }
+    }
+
+    function filterAndRenderWatchlist() {
+      const q = (document.getElementById("watchlist-search")?.value || "").toLowerCase().trim();
+      let filtered = watchlist;
+      if (currentMarketFilter === "IN") {
+        filtered = filtered.filter(s => (s.region || "IN") === "IN");
+      } else if (currentMarketFilter === "US") {
+        filtered = filtered.filter(s => (s.region || "IN") === "US");
+      }
+      if (q) {
+        filtered = filtered.filter(s => s.ticker.toLowerCase().includes(q) || s.company_name.toLowerCase().includes(q));
+      }
+      renderWatchlist(filtered);
     }
 
     function renderWatchlist(items) {
@@ -898,6 +956,7 @@
       items.forEach(stock => {
         const isSel = stock.ticker === currentTicker;
         const isPos = stock.change_pct >= 0;
+        const isUS = (stock.region || "IN") === "US";
 
         const pill = document.createElement("div");
         pill.className = `flex-shrink-0 px-3.5 py-1.5 rounded-xl border cursor-pointer transition text-xs font-mono ${
@@ -908,41 +967,42 @@
         pill.onclick = () => selectStock(stock.ticker);
 
         pill.innerHTML = `
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
+            <span class="text-[10px]">${isUS ? '🇺🇸' : '🇮🇳'}</span>
             <span class="font-bold text-slate-900 dark:text-white">${stock.ticker}</span>
             <span class="font-bold text-[11px] ${isPos ? 'text-emerald-600 dark:text-spidey-green' : 'text-rose-600 dark:text-spidey-red'}">
               ${isPos ? '+' : ''}${stock.change_pct.toFixed(2)}%
             </span>
           </div>
           <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5" id="strip-price-${stock.ticker}">
-            ₹${stock.price.toFixed(2)}
+            ${formatPrice(stock.price, stock.currency)}
           </div>
         `;
         container.appendChild(pill);
       });
     }
 
-    document.getElementById("watchlist-search").addEventListener("input", (e) => {
-      const q = e.target.value.toLowerCase().trim();
-      const filtered = watchlist.filter(s => s.ticker.toLowerCase().includes(q) || s.company_name.toLowerCase().includes(q));
-      renderWatchlist(filtered);
+    document.getElementById("watchlist-search").addEventListener("input", () => {
+      filterAndRenderWatchlist();
     });
 
     async function selectStock(ticker) {
       currentTicker = ticker;
-      renderWatchlist(watchlist);
+      filterAndRenderWatchlist();
 
       const quoteRes = await fetch(`/api/quote/${ticker}`);
       const quote = await quoteRes.json();
       livePriceVal = quote.price;
+      currentStockCurrency = quote.currency || "INR";
 
       document.getElementById("stock-name").textContent = quote.company_name;
       document.getElementById("stock-ticker").textContent = quote.ticker;
       document.getElementById("stock-sector").textContent = quote.sector;
-      document.getElementById("stock-live-price").textContent = `₹${quote.price.toFixed(2)}`;
+      document.getElementById("stock-exchange-label").textContent = `${quote.exchange} Live Real-Time Stream (${quote.region === 'US' ? 'Global / US Market' : 'Indian Market'})`;
+      document.getElementById("stock-live-price").textContent = formatPrice(quote.price, quote.currency);
 
       const isPos = quote.change_pct >= 0;
-      document.getElementById("stock-change-inr").textContent = `${isPos ? '+' : ''}₹${quote.change_inr.toFixed(2)}`;
+      document.getElementById("stock-change-inr").textContent = formatChange(quote.change_inr, quote.currency);
       document.getElementById("stock-change-inr").className = isPos ? "text-emerald-600 dark:text-spidey-green" : "text-rose-600 dark:text-spidey-red";
       document.getElementById("stock-change-pct").textContent = `(${isPos ? '+' : ''}${quote.change_pct.toFixed(2)}%)`;
       document.getElementById("stock-change-pct").className = isPos
@@ -950,7 +1010,12 @@
         : "text-rose-600 dark:text-spidey-red bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800/60";
 
       document.getElementById("stat-ema-val").textContent = quote.ema_20.toFixed(1);
-      document.getElementById("val-mcap").textContent = `₹${((quote.market_cap_crores || 100000)/100000).toFixed(2)}L Cr`;
+      
+      if (quote.currency === "USD") {
+        document.getElementById("val-mcap").textContent = `$${((quote.market_cap_crores || 100000) / 8400000).toFixed(2)}T`;
+      } else {
+        document.getElementById("val-mcap").textContent = `₹${((quote.market_cap_crores || 100000)/100000).toFixed(2)}L Cr`;
+      }
       document.getElementById("val-pe").textContent = (quote.pe_ratio || 20.0).toFixed(2);
       document.getElementById("val-beta").textContent = (quote.beta || 1.0).toFixed(2);
 
@@ -1042,7 +1107,10 @@
               borderWidth: 1,
               padding: 8,
               callbacks: {
-                label: function(ctx) { return `${ctx.dataset.label}: ₹${ctx.parsed.y.toFixed(2)}`; }
+                label: function(ctx) {
+                  const sym = currentStockCurrency === "USD" ? "$" : "₹";
+                  return `${ctx.dataset.label}: ${sym}${ctx.parsed.y.toFixed(2)}`;
+                }
               }
             }
           },
@@ -1060,7 +1128,10 @@
               ticks: {
                 color: isDark ? '#64748b' : '#94a3b8',
                 font: { family: 'JetBrains Mono', size: 10 },
-                callback: function(v) { return '₹' + v; }
+                callback: function(v) {
+                  const sym = currentStockCurrency === "USD" ? "$" : "₹";
+                  return sym + v;
+                }
               }
             }
           }
@@ -1074,11 +1145,11 @@
       liveMovingInterval = setInterval(() => {
         if (!liveMovingChart || currentTimeframe !== "1D") return;
 
-        const delta = (Math.random() - 0.48) * 0.45;
+        const delta = (Math.random() - 0.48) * (currentStockCurrency === "USD" ? 0.18 : 0.45);
         livePriceVal = Math.max(1, livePriceVal + delta);
 
         const priceEl = document.getElementById("stock-live-price");
-        priceEl.textContent = `₹${livePriceVal.toFixed(2)}`;
+        priceEl.textContent = formatPrice(livePriceVal, currentStockCurrency);
         priceEl.className = delta >= 0 
           ? "text-3xl font-black font-mono flash-up text-slate-900 dark:text-white" 
           : "text-3xl font-black font-mono flash-down text-slate-900 dark:text-white";
@@ -1099,7 +1170,7 @@
         liveMovingChart.update('none');
 
         const stripP = document.getElementById(`strip-price-${currentTicker}`);
-        if (stripP) stripP.textContent = `₹${livePriceVal.toFixed(2)}`;
+        if (stripP) stripP.textContent = formatPrice(livePriceVal, currentStockCurrency);
 
       }, 1600);
     }
@@ -1194,21 +1265,29 @@
     function initCompareDropdowns() {
       const selA = document.getElementById("compare-select-a");
       const selB = document.getElementById("compare-select-b");
+      if (!selA || !selB) return;
+
+      const currentValA = selA.value;
+      const currentValB = selB.value;
 
       selA.innerHTML = '<option value="" disabled selected>-- Select Asset A --</option>';
       selB.innerHTML = '<option value="" disabled selected>-- Select Asset B --</option>';
 
       watchlist.forEach(stock => {
+        const flag = (stock.region || "IN") === "US" ? "🇺🇸" : "🇮🇳";
         const optA = document.createElement("option");
         optA.value = stock.ticker;
-        optA.textContent = `${stock.ticker} (${stock.company_name.split(' ')[0]})`;
+        optA.textContent = `${flag} ${stock.ticker} · ${stock.company_name}`;
         selA.appendChild(optA);
 
         const optB = document.createElement("option");
         optB.value = stock.ticker;
-        optB.textContent = `${stock.ticker} (${stock.company_name.split(' ')[0]})`;
+        optB.textContent = `${flag} ${stock.ticker} · ${stock.company_name}`;
         selB.appendChild(optB);
       });
+
+      if (currentValA) selA.value = currentValA;
+      if (currentValB) selB.value = currentValB;
     }
 
     async function runComparisonDuel() {
@@ -1266,18 +1345,20 @@
       const q = stockItem.quote;
       const syn = stockItem.synthesis;
       const isPos = q.change_pct >= 0;
+      const sym = q.currency === "USD" ? "$" : "₹";
+      const isUS = (q.region || "IN") === "US";
 
       const card = document.createElement("div");
       card.className = "bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-4";
       card.innerHTML = `
         <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
           <div>
-            <span class="text-[10px] font-mono uppercase font-bold text-slate-400">${label}</span>
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400">${label} (${isUS ? '🇺🇸 US / NASDAQ' : '🇮🇳 NSE'})</span>
             <h4 class="text-base font-black text-slate-900 dark:text-white">${q.company_name}</h4>
             <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">${q.ticker} · ${q.sector}</div>
           </div>
           <div class="text-right">
-            <div class="text-xl font-mono font-black text-slate-900 dark:text-white">₹${q.price.toFixed(2)}</div>
+            <div class="text-xl font-mono font-black text-slate-900 dark:text-white">${sym}${q.price.toFixed(2)}</div>
             <div class="text-xs font-mono font-bold ${isPos ? 'text-emerald-600 dark:text-spidey-green' : 'text-rose-600 dark:text-spidey-red'}">
               ${isPos ? '+' : ''}${q.change_pct.toFixed(2)}%
             </div>

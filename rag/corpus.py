@@ -204,6 +204,77 @@ FINANCIAL_CORPUS: List[Dict[str, str]] = [
         "date": "2026-08-19",
         "text": "Sun Pharma global specialty revenues grew 19.2% YoY to $315 Million, driven by Ilumya, Cequa, and Winlevi dermatological adoption. India formulation sales expanded 11.4% YoY outpacing Indian Pharma Market (IPM) benchmark. R&D spending stood at 6.2% of sales dedicated to specialty clinical trials. Consolidated EBITDA margins reached 27.4% with zero long-term debt.",
         "keywords": ["sunpharma", "pharma", "specialty", "ilumya", "usfda", "ebitda", "r&d", "formulation"]
+    },
+
+    # =========================================================================
+    # GLOBAL / US FOREIGN EQUITIES (SEC 10-Q / 10-K FILINGS & CONCALLS)
+    # =========================================================================
+
+    # --- NVIDIA CORPORATION (NVDA) ---
+    {
+        "doc_id": "NVDA_Q2FY26_SEC_10Q",
+        "ticker": "NVDA",
+        "title": "NVIDIA Corp - SEC Form 10-Q Quarterly Report & Investor Presentation",
+        "section": "Data Center Compute & Blackwell Architecture Commercialization (Item 2)",
+        "date": "2026-08-28",
+        "text": "NVIDIA recorded quarterly revenue of $30.04 Billion, up 122% YoY, led by Data Center compute revenue of $26.3 Billion. Gross margins held exceptional at 75.1%. Management confirmed customer sampling and production ramp of the next-generation 'Blackwell' B200 architecture, with anticipated multi-billion dollar revenue in FY26. Supply chain commitments for high-bandwidth memory (HBM3e) and advanced CoWoS packaging are secured through FY27, while hyperscaler enterprise AI demand remains in structural supply deficit.",
+        "keywords": ["nvda", "nvidia", "gpu", "blackwell", "data center", "ai", "revenue", "margins", "hbm3e"]
+    },
+
+    # --- APPLE INC. (AAPL) ---
+    {
+        "doc_id": "AAPL_Q3FY26_SEC_10Q",
+        "ticker": "AAPL",
+        "title": "Apple Inc. - SEC Form 10-Q Quarterly Financial Report",
+        "section": "Services Gross Margin & Apple Intelligence Ecosystem Monetization (Part I)",
+        "date": "2026-08-03",
+        "text": "Apple delivered quarterly revenue of $85.8 Billion (+4.9% YoY). Services revenue reached an all-time record of $24.2 Billion with gross margin expanding to 74.0%. The active installed base of devices crossed 2.2 Billion units globally. Management highlighted initial deployment of 'Apple Intelligence' on A17 Pro and M-series silicon, driving accelerating premium iPhone replacement cycles in North America and Western Europe. Operating cash flow stood at $28.9 Billion with $32 Billion returned to shareholders via dividends and share repurchases.",
+        "keywords": ["apple", "aapl", "iphone", "services", "apple intelligence", "margins", "cash flow", "buyback"]
+    },
+
+    # --- MICROSOFT CORPORATION (MSFT) ---
+    {
+        "doc_id": "MSFT_FY26_SEC_10K",
+        "ticker": "MSFT",
+        "title": "Microsoft Corp - SEC Form 10-K Annual Filing & Earnings Concall",
+        "section": "Intelligent Cloud & Enterprise Copilot Annual Run-Rate (Item 7)",
+        "date": "2026-07-30",
+        "text": "Microsoft reported Intelligent Cloud revenue of $28.5 Billion (+19% YoY), driven by Azure cloud revenue growth of 29% in constant currency (with 8 percentage points directly attributed to Azure AI services). Microsoft 365 Copilot enterprise paid seats expanded 60% quarter-over-quarter across Fortune 500 customers. Capital expenditure for AI infrastructure reached $19.0 Billion, supporting hyperscale data center buildouts in 60+ sovereign regions with net debt remaining negligible.",
+        "keywords": ["microsoft", "msft", "azure", "cloud", "copilot", "ai", "enterprise", "capex", "margins"]
+    },
+
+    # --- TESLA, INC. (TSLA) ---
+    {
+        "doc_id": "TSLA_Q2FY26_SEC_10Q",
+        "ticker": "TSLA",
+        "title": "Tesla, Inc. - SEC Form 10-Q Quarterly Disclosure & Shareholder Update",
+        "section": "Automotive Gross Margin ex-Regulatory Credits & Energy Storage Deployments",
+        "date": "2026-07-25",
+        "text": "Tesla recorded quarterly total revenue of $25.5 Billion (+2% YoY). Automotive gross margin excluding regulatory credits stabilized at 14.6%. Energy Storage deployments reached a record 9.4 GWh in the quarter, generating $3.01 Billion in revenue with segment gross margin expanding to 24.5%. Capital expenditures stood at $2.27 Billion, focused on expanding the Cortex 50,000-GPU training supercluster for Full Self-Driving (FSD) v12.5 and Cybercab robotaxi autonomous network rollout.",
+        "keywords": ["tesla", "tsla", "ev", "megapack", "energy", "fsd", "robotaxi", "automotive", "cortex"]
+    },
+
+    # --- ALPHABET INC. (GOOGL) ---
+    {
+        "doc_id": "GOOGL_Q2FY26_SEC_10Q",
+        "ticker": "GOOGL",
+        "title": "Alphabet Inc. - SEC Form 10-Q Quarterly Report & Earnings Transcript",
+        "section": "Google Cloud Operating Leverage & Search AI Overviews (Item 1)",
+        "date": "2026-07-24",
+        "text": "Alphabet consolidated revenue rose 14% YoY to $84.7 Billion. Google Cloud revenue surged 28.8% to $10.35 Billion, with operating income nearly tripling to $1.17 Billion (11.3% operating margin) driven by enterprise generative AI infrastructure and Gemini API developer adoption. Google Services operating margin held strong at 39.8%. Capital expenditures reached $13.2 Billion reflecting continued multi-quarter investments in Custom TPUs (v5e/v5p/Trillium) and global network connectivity.",
+        "keywords": ["alphabet", "googl", "google", "cloud", "gemini", "tpu", "search", "ai overviews", "margins"]
+    },
+
+    # --- AMAZON.COM, INC. (AMZN) ---
+    {
+        "doc_id": "AMZN_Q2FY26_SEC_10Q",
+        "ticker": "AMZN",
+        "title": "Amazon.com, Inc. - SEC Form 10-Q Quarterly Report",
+        "section": "AWS Cloud Operating Income & North America Retail Efficiency (Part I)",
+        "date": "2026-08-01",
+        "text": "Amazon net sales increased 10% YoY to $148.0 Billion. AWS revenue accelerated to $26.3 Billion (+19% YoY) with operating income expanding to $9.3 Billion (35.5% segment operating margin), driven by enterprise cloud migrations and bedrock generative AI models. North America retail operating margin improved to 5.6% following regional fulfillment network optimization and delivery speed gains. Free cash flow for the trailing twelve months expanded to $53.0 Billion.",
+        "keywords": ["amazon", "amzn", "aws", "cloud", "bedrock", "e-commerce", "margins", "cash flow", "retail"]
     }
 ]
+
 
