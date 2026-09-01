@@ -7,14 +7,14 @@
 ## 1. Decision 1: Parallel ThreadPool vs Sequential Agent Execution
 - **Context**: Real-time retail decision requirements demand high-throughput multi-agent synthesis with minimal round-trip latency.
 - **Decision**: Implemented `ThreadPoolExecutor(max_workers=4)` inside `WebMindOrchestrator` to execute Market Spider, Fundamental Web (RAG), Sentiment Spider, and Risk Guardian concurrently.
-- **Outcome**: Total pipeline execution latency dropped from ~110ms to **~34ms** sub-second response while measuring real runtime latency.
+- **Outcome**: Designed for low-latency interactive analysis with per-agent execution telemetry, executing concurrent sub-second analysis.
 
 ---
 
 ## 2. Decision 2: Semantic Vector TF-IDF RAG with Ticker Isolation
 - **Context**: LLM-based RAG pipelines frequently suffer from cross-document hallucination and high API token latency.
 - **Decision**: Built an in-memory TF-IDF / Cosine Vector engine with strict ticker isolation. Documents are chunked, tokenized, and indexed by equity ticker.
-- **Outcome**: Deterministic, zero-dependency RAG execution in under 2ms with verifiable page and section citations.
+- **Outcome**: Deterministic, zero-dependency RAG execution with verifiable page and section citations.
 
 ---
 

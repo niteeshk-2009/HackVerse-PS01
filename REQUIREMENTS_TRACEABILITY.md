@@ -91,8 +91,8 @@ This document provides a factual, line-by-line audit mapping every core requirem
 ### 6. Performance Logging & Measurable Telemetry
 - **PS-01 Mandate**: Performance logging with at least THREE measurable metrics.
 - **Implementation**: SQLite session persistence tracking 4 distinct quantitative metrics per pipeline execution:
-  1. `total_pipeline_latency_ms`: Real runtime roundtrip latency (typically 25-40ms).
-  2. `rag_retrieval_latency_ms`: Semantic corpus search latency (typically 1-3ms).
+  1. `total_pipeline_latency_ms`: Real runtime roundtrip latency measured at execution time.
+  2. `rag_retrieval_latency_ms`: Semantic corpus search latency.
   3. `portfolio_risk_concentration`: Mathematical Herfindahl-Hirschman Index (HHI, 0 - 10000).
   4. `signal_agreement_score_pct`: Multi-agent consensus percentage.
 - **Relevant Source Files**:

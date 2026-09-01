@@ -34,7 +34,7 @@ Show the live **Cockpit & 4 Agents** view.
    - Continuously streaming ticks with overlaid 20-day EMA strictly bound to real-time timestamps.
 2. **The Web Mind Master Synthesis**:
    - Synthesized recommendation: **"GRADUAL STAGGERED ACCUMULATION (SIP)"**.
-   - Execution latency: **~29 milliseconds** (measured sub-second runtime latency).
+   - Execution latency: Designed for low-latency interactive analysis with per-agent execution telemetry.
    - Tailored decision rationale answering the 5 core investor questions.
 3. **The 4 Specialized Agents Executing in Parallel**:
    - **Market Spider**: 3 independent dimensions (Price Momentum, Volume Surge 1.61x, Oscillators).

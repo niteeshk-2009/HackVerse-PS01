@@ -7,7 +7,7 @@ Built for **HackVerse: Into the Web (Sprint 1 — Web-Slinger Sprint / Rapid Vib
 **Problem Statement PS-01** · Organized by IEEE Robotics & Automation Society (IEEE RAS), VIT Chennai · TechnoVIT 2026.  
 
 **Official Repository**: [https://github.com/niteeshk-2009/HackVerse-PS01](https://github.com/niteeshk-2009/HackVerse-PS01)  
-**Public Deployment**: `N/A — No public deployment is required for Sprint 1 (Optional per HackVerse Handbook)`  
+**Public Deployment**: N/A — No public deployment for Sprint 1.  
 **Local Development Access**: `http://localhost:8000` *(Local development only)*
 
 ---

@@ -24,4 +24,4 @@ This document provides a technical traceability audit mapping every mandate of *
 ## Key Data Policy Verification
 - **Strict 3-State Labeling**: Code explicitly checks `DataSourceState.LIVE_DATA`, `DataSourceState.DEMO_DATA`, and `DataSourceState.DATA_UNAVAILABLE`.
 - **Zero Fabrication**: When SEBI corporate filings are missing in stress tests, the system refuses to guess numbers and outputs `DATA_UNAVAILABLE` with an Anti-Hallucination warning.
-- **Latency Standards**: Full 4-agent parallel pipeline executes in under 40 milliseconds, far surpassing the PS-01 requirement of $< 60$ seconds.
+- **Latency Standards**: Designed for low-latency interactive analysis with per-agent execution telemetry, executing specialized agents concurrently via multi-threading.
