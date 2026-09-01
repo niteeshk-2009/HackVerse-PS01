@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SpiderSense — Multi-Agent Financial Intelligence for Retail Investors</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            // Peter Parker (Dark Mode Theme)
+            spidey: {
+              black: '#070a12',
+              card: '#0e1424',
+              cardHover: '#131b30',
+              border: '#1c2842',
+              red: '#e62429',
+              redLight: '#ff3b3b',
+              blue: '#00d2ff',
+              blueDark: '#0284c7',
+              green: '#00e699'
+            },
+            // Gwen Stacy (Light Mode Theme)
+            gwen: {
+              white: '#ffffff',
+              bg: '#fcfaff',
+              card: '#ffffff',
+              border: '#f3e8f8',
+              pink: '#ff2a85',
+              pinkLight: '#fff0f6',
+              purple: '#7c3aed',
+              purpleLight: '#f5f3ff',
+              text: '#1e1b4b',
+              textMuted: '#6b7280'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'Segoe UI', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.2); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #e62429; }
+
+    /* Spider-Web Lattice Grid Pattern */
+    .spider-grid {
+      background-size: 32px 32px;
+      background-image: 
+        linear-gradient(to right, rgba(0, 210, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 210, 255, 0.04) 1px, transparent 1px);
+    }
+    html:not(.dark) .spider-grid {
+      background-image: 
+        linear-gradient(to right, rgba(255, 42, 133, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(124, 58, 237, 0.04) 1px, transparent 1px);
+    }
+
+    /* Live tick flash */
+    @keyframes tickGreen { 0% { color: #00e699; transform: scale(1.04); } 100% { transform: scale(1); } }
+    @keyframes tickRed { 0% { color: #ff3b3b; transform: scale(1.04); } 100% { transform: scale(1); } }
+    .flash-up { animation: tickGreen 0.6s ease-out; }
+    .flash-down { animation: tickRed 0.6s ease-out; }
+
+    /* Theme Pulse */
+    .pulse-dot {
+      position: relative;
+    }
+    .pulse-dot::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0; left: 0;
+      border-radius: 50%;
+      animation: pulseAnim 1.8s infinite cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+    .dark .pulse-dot::after { border: 2px solid #00d2ff; }
+    html:not(.dark) .pulse-dot::after { border: 2px solid #ff2a85; }
+    @keyframes pulseAnim {
+      0% { transform: scale(0.8); opacity: 0.9; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="bg-gwen-bg dark:bg-spidey-black text-gwen-text dark:text-slate-100 min-h-screen font-sans transition-colors duration-200 flex flex-col spider-grid">
+
+  <!-- ========================================================================= -->
+  <!-- TOP NAVIGATION BAR -->
+  <!-- ========================================================================= -->
+  <header class="sticky top-0 z-40 bg-white/95 dark:bg-spidey-black/95 backdrop-blur border-b border-gwen-border dark:border-spidey-border px-4 lg:px-8 py-3 transition-colors">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      
+      <!-- Brand & Superhero Identity (Pure Red & Black Logo with Blue Outline) -->
+      <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+        <div class="w-10 h-10 rounded-xl bg-black border-2 border-cyan-400 flex items-center justify-center text-red-600 shadow-lg shadow-cyan-500/25 pulse-dot">
+          <i data-lucide="shield" class="w-5 h-5 text-red-600 fill-red-600 stroke-[2]"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="text-xl font-black tracking-tight text-slate-900 dark:text-white font-sans">SpiderSense</span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Autonomous Multi-Agent Financial Intelligence for Retail Investors</p>
+        </div>
+      </div>
+
+      <!-- Center Navigation Tabs: Cockpit | Compare | Stress Testing -->
+      <nav class="hidden md:flex items-center gap-1 p-1 rounded-xl bg-slate-100 dark:bg-spidey-card border border-gwen-border dark:border-spidey-border text-xs font-bold font-mono">
+        <button onclick="showTab('cockpit')" id="tab-btn-cockpit" class="px-3.5 py-1.5 rounded-lg bg-white dark:bg-spidey-blue/20 text-gwen-pink dark:text-spidey-blue shadow-sm transition">
+          Cockpit & 4 Agents
+        </button>
+        <button onclick="showTab('compare')" id="tab-btn-compare" class="px-3.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+          Compare 2 Stocks
+        </button>
+        <button onclick="showTab('stress')" id="tab-btn-stress" class="px-3.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition">
+          Stress Testing
+        </button>
+      </nav>
+
+      <!-- Right: User Profile & Minimalist Switch Toggle Button -->
+      <div class="flex items-center gap-3">
+        
+        <!-- Active User Profile Chip -->
+        <button id="btn-open-profile" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-spidey-card border border-gwen-border dark:border-spidey-border hover:border-gwen-pink dark:hover:border-spidey-blue transition text-xs">
+          <div class="w-6 h-6 rounded-lg bg-gwen-purple dark:bg-spidey-red text-white flex items-center justify-center font-bold text-[11px]" id="user-avatar">
+            U
+          </div>
+          <div class="text-left hidden sm:block">
+            <div class="font-bold text-slate-900 dark:text-white text-xs truncate max-w-[120px]" id="user-name-display">Personal Investor</div>
+            <div class="text-[10px] text-gwen-pink dark:text-spidey-blue font-mono" id="user-stats-display">Set Profile</div>
+          </div>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5 text-slate-400"></i>
+        </button>
+
+        <!-- Modern Toggle Switch (As shown in user image) -->
+        <button id="theme-toggle-switch" type="button" aria-label="Toggle theme" class="relative inline-flex items-center w-14 h-7 rounded-full p-0.5 transition-all duration-300 focus:outline-none border shadow-sm cursor-pointer bg-white border-slate-300 dark:bg-[#262628] dark:border-[#3a3a3c]" title="Toggle Light / Dark Mode">
+          <span id="theme-knob" class="w-6 h-6 rounded-full flex items-center justify-center transition-transform duration-300 transform shadow-md translate-x-7 bg-black text-white dark:translate-x-0 dark:bg-white dark:text-black">
+            <!-- Moon for light mode -->
+            <i data-lucide="moon" class="w-3.5 h-3.5 block dark:hidden fill-current stroke-none"></i>
+            <!-- Sun for dark mode -->
+            <i data-lucide="sun" class="w-3.5 h-3.5 hidden dark:block fill-current"></i>
+          </span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ========================================================================= -->
+  <!-- GROWW POPULAR EQUITIES WATCHLIST STRIP WITH SEARCH FILTER -->
+  <!-- ========================================================================= -->
+  <div class="bg-white/80 dark:bg-spidey-black/80 border-b border-gwen-border dark:border-spidey-border py-2.5 px-4 lg:px-8">
+    <div class="max-w-7xl mx-auto flex items-center gap-3">
+      
+      <!-- Quick Search Input -->
+      <div class="relative w-48 sm:w-56 flex-shrink-0">
+        <i data-lucide="search" class="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+        <input type="text" id="watchlist-search" placeholder="Search stocks..." class="w-full pl-8 pr-3 py-1.5 rounded-xl bg-slate-100 dark:bg-spidey-card border border-gwen-border dark:border-spidey-border text-xs text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition font-mono">
+      </div>
+
+      <!-- Ticker Horizontal Carousel (All Groww Companies) -->
+      <div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5" id="groww-watchlist-container">
+        <!-- Injected via JavaScript: TATAMOTORS, RELIANCE, HDFCBANK, ICICIBANK, INFY, TCS, ZOMATO, SBIN, BHARTIARTL, ITC, BAJFINANCE, LT, MARUTI, SUNPHARMA -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MAIN CONTAINER -->
+  <!-- ========================================================================= -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 lg:px-8 py-5 space-y-6">
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: COCKPIT & 4 INDEPENDENT AGENTS PANELS -->
+    <!-- ========================================================================= -->
+    <div id="tab-content-cockpit" class="space-y-6">
+      
+      <!-- Hero Row: Live Moving Price Tape (Left) + The Web Mind Synthesis (Right) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5">
+        
+        <!-- LEFT 7 COLS: MOVING REAL-TIME CHART -->
+        <div class="lg:col-span-7 bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-4">
+          
+          <div class="flex flex-wrap items-start justify-between gap-4 pb-3 border-b border-slate-100 dark:border-slate-800">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl font-black text-slate-900 dark:text-white" id="stock-name">Tata Motors Limited</span>
+                <span class="text-xs px-2 py-0.5 rounded font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300" id="stock-ticker">TATAMOTORS</span>
+                <span class="text-xs text-slate-400" id="stock-sector">Automobile</span>
+              </div>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-mono">NSE Live Real-Time Stream</p>
+            </div>
+
+            <div class="text-right">
+              <div class="text-3xl font-black font-mono text-slate-900 dark:text-white transition-colors duration-150" id="stock-live-price">
+                ₹1,048.50
+              </div>
+              <div class="flex items-center justify-end gap-1.5 mt-0.5 font-mono text-xs font-bold">
+                <span id="stock-change-inr" class="text-emerald-600 dark:text-spidey-green">+₹24.30</span>
+                <span id="stock-change-pct" class="text-emerald-600 dark:text-spidey-green bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60">
+                  (+2.37%)
+                </span>
+                <span class="text-slate-400 text-[11px] font-sans font-normal ml-0.5">Today</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Timeframes & Moving Indicator -->
+          <div class="flex items-center justify-between text-xs font-mono">
+            <div class="flex items-center gap-1 p-1 bg-slate-100 dark:bg-spidey-black rounded-xl border border-gwen-border dark:border-spidey-border font-bold">
+              <button class="tf-btn px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-tf="1D">1D (Live)</button>
+              <button class="tf-btn px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-tf="1W">1W</button>
+              <button class="tf-btn px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-tf="1M">1M</button>
+              <button class="tf-btn px-2.5 py-1 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition" data-tf="1Y">1Y</button>
+            </div>
+
+            <div class="flex items-center gap-3 text-slate-500 dark:text-slate-400">
+              <div class="flex items-center gap-1.5 text-emerald-600 dark:text-spidey-green font-bold">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></span>
+                <span>STREAMING TICKS</span>
+              </div>
+              <span>20 EMA: <strong class="text-gwen-purple dark:text-spidey-blue" id="stat-ema-val">1012.4</strong></span>
+            </div>
+          </div>
+
+          <!-- Canvas -->
+          <div class="relative w-full h-64">
+            <canvas id="liveChartCanvas"></canvas>
+          </div>
+
+        </div>
+
+        <!-- RIGHT 5 COLS: THE WEB MIND MASTER SYNTHESIS -->
+        <div class="lg:col-span-5 bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-4 flex flex-col justify-between">
+          
+          <div>
+            <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+              <div>
+                <span class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">The Web Mind Synthesis</span>
+                <p class="text-[11px] text-slate-500 dark:text-slate-400 font-mono">
+                  Latency: <strong class="text-emerald-600 dark:text-spidey-green" id="out-latency">29ms</strong> · Confidence: <strong class="text-gwen-pink dark:text-spidey-blue" id="out-confidence">84%</strong>
+                </p>
+              </div>
+              <button onclick="runAnalysisPipeline()" class="p-1.5 rounded-lg border border-slate-200 dark:border-slate-700 text-slate-500 hover:text-spidey-red dark:hover:text-spidey-blue transition" title="Re-analyze">
+                <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="mt-3">
+              <div class="text-[10px] text-slate-400 uppercase tracking-wider font-semibold font-mono">Actionable Guidance</div>
+              <div class="text-base font-black text-slate-900 dark:text-white mt-1 p-3 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border font-mono tracking-tight text-emerald-600 dark:text-spidey-green" id="out-verdict">
+                GRADUAL STAGGERED ACCUMULATION (SIP)
+              </div>
+            </div>
+
+            <!-- Tailored Explanation -->
+            <div class="mt-3 space-y-2.5 text-xs">
+              <div>
+                <span class="font-bold text-slate-800 dark:text-slate-200">Decision Rationale:</span>
+                <p class="text-slate-600 dark:text-slate-300 mt-0.5 leading-relaxed" id="out-summary">
+                  Selective accumulation on dips. Solid fundamental moat and low debt align with capital preservation.
+                </p>
+              </div>
+
+              <!-- Capital & Risk Guardrail -->
+              <div class="p-3 rounded-xl bg-purple-50/60 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/50">
+                <span class="font-bold text-purple-800 dark:text-purple-300 flex items-center gap-1 text-[11px] mb-1">
+                  <i data-lucide="shield-check" class="w-3.5 h-3.5 text-gwen-purple dark:text-spidey-blue"></i>
+                  <span id="out-guardrail-title">Portfolio Risk Guardrail</span>
+                </span>
+                <p class="text-slate-700 dark:text-purple-200 text-[11px] leading-relaxed" id="out-personalization">
+                  Position sizing is constrained by asset beta (1.45) and your portfolio allocation ceiling to preserve a safe cash buffer.
+                </p>
+              </div>
+
+              <!-- Cross-Agent Conflict Alert -->
+              <div id="out-conflict-box" class="hidden p-3 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-300 dark:border-amber-700">
+                <div class="flex items-center gap-1.5 font-bold text-amber-800 dark:text-amber-300 text-[11px]">
+                  <i data-lucide="alert-triangle" class="w-3.5 h-3.5 text-amber-500"></i>
+                  <span>Cross-Agent Conflict Handled</span>
+                </div>
+                <p class="text-slate-600 dark:text-amber-200/90 text-[11px] mt-1" id="out-conflict-text">
+                  Technical breakout contradicted by institutional selling; momentum score discounted.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stock Details -->
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-2 text-xs font-mono">
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <div class="text-[10px] text-slate-400">Market Cap</div>
+              <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5" id="val-mcap">₹3.86L Cr</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <div class="text-[10px] text-slate-400">P/E Ratio</div>
+              <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5" id="val-pe">16.80</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <div class="text-[10px] text-slate-400">Asset Beta</div>
+              <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5" id="val-beta">1.45</div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- 4 INDEPENDENT SPECIALIZED AGENT PANELS -->
+      <!-- ========================================================================= -->
+      <div>
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="cpu" class="w-4 h-4 text-gwen-pink dark:text-spidey-blue"></i>
+            <span>4 Specialized Agents (Independent Execution Panels)</span>
+          </h3>
+          <span class="text-xs font-mono text-slate-500 dark:text-slate-400">All 4 Running in Parallel</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- AGENT 1: MARKET SPIDER -->
+          <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-spidey-green">
+                  <i data-lucide="trending-up" class="w-4 h-4"></i>
+                </span>
+                <span class="font-bold text-xs text-slate-900 dark:text-white">Market Spider</span>
+              </div>
+              <span class="text-[11px] font-mono font-bold text-emerald-600 dark:text-spidey-green" id="ag-market-badge">
+                BULLISH (+72)
+              </span>
+            </div>
+            <div class="text-xs space-y-1.5 font-mono">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Volume Surge:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-market-vol">1.61x</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">RSI (14):</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-market-rsi">68.4</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Trend Status:</span>
+                <span class="font-bold text-emerald-600 dark:text-spidey-green" id="ag-market-trend">Above 20/50 EMA</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed pt-2 border-t border-slate-100 dark:border-slate-800" id="ag-market-desc">
+              Strong technical momentum confirmed by breakout above 20-day EMA and high delivery volume.
+            </p>
+          </div>
+
+          <!-- AGENT 2: FUNDAMENTAL WEB (SEBI LODR RAG) -->
+          <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-blue-50 dark:bg-blue-950/60 text-blue-600 dark:text-spidey-blue">
+                  <i data-lucide="file-check-2" class="w-4 h-4"></i>
+                </span>
+                <span class="font-bold text-xs text-slate-900 dark:text-white">Fundamental Web</span>
+              </div>
+              <span class="text-[11px] font-mono font-bold text-blue-600 dark:text-spidey-blue" id="ag-fund-badge">
+                BULLISH (+78)
+              </span>
+            </div>
+            <div class="text-xs space-y-1.5 font-mono">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">RAG Filing Match:</span>
+                <span class="font-bold text-emerald-600 dark:text-spidey-green" id="ag-fund-match">88%</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">ROE %:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-fund-roe">24.6%</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Debt/Equity:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-fund-de">0.42</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed pt-2 border-t border-slate-100 dark:border-slate-800" id="ag-fund-desc">
+              Grounded in Q2 SEBI LODR filings: EBIT margins expanded 180 bps, net zero automotive debt targeted.
+            </p>
+          </div>
+
+          <!-- AGENT 3: SENTIMENT SPIDER (SMART MONEY) -->
+          <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400">
+                  <i data-lucide="radio" class="w-4 h-4"></i>
+                </span>
+                <span class="font-bold text-xs text-slate-900 dark:text-white">Sentiment Spider</span>
+              </div>
+              <span class="text-[11px] font-mono font-bold text-amber-600 dark:text-amber-400" id="ag-sent-badge">
+                BULLISH (+76)
+              </span>
+            </div>
+            <div class="text-xs space-y-1.5 font-mono">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">FII Net Inflow:</span>
+                <span class="font-bold text-emerald-600 dark:text-spidey-green" id="ag-sent-fii">+₹340 Cr</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Retail FOMO Index:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-sent-fomo">38 / 100</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Retail Trap Alert:</span>
+                <span class="font-bold text-emerald-600 dark:text-spidey-green" id="ag-sent-trap">SAFE (NO TRAP)</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed pt-2 border-t border-slate-100 dark:border-slate-800" id="ag-sent-desc">
+              Institutional smart money accumulation supports rally without retail call option euphoria.
+            </p>
+          </div>
+
+          <!-- AGENT 4: RISK GUARDIAN (PORTFOLIO ARMOR) -->
+          <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-4 shadow-sm space-y-3">
+            <div class="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+              <div class="flex items-center gap-2">
+                <span class="p-1.5 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-gwen-purple">
+                  <i data-lucide="shield" class="w-4 h-4"></i>
+                </span>
+                <span class="font-bold text-xs text-slate-900 dark:text-white">Risk Guardian</span>
+              </div>
+              <span class="text-[11px] font-mono font-bold text-purple-600 dark:text-gwen-purple" id="ag-risk-badge">
+                BULLISH (+65)
+              </span>
+            </div>
+            <div class="text-xs space-y-1.5 font-mono">
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Portfolio HHI:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-risk-hhi">3,550</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Sector Ceiling:</span>
+                <span class="font-bold text-slate-700 dark:text-slate-300" id="ag-risk-sec">30.0% Max</span>
+              </div>
+              <div class="flex justify-between text-[11px]">
+                <span class="text-slate-400">Max Sizing Limit:</span>
+                <span class="font-bold text-emerald-600 dark:text-spidey-green" id="ag-risk-sizing">₹45,000</span>
+              </div>
+            </div>
+            <p class="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed pt-2 border-t border-slate-100 dark:border-slate-800" id="ag-risk-desc">
+              Capital protection limits new exposure to maintain cash cushion and prevent overconcentration.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Verified RAG Regulatory Filing Citation Box -->
+      <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-2">
+        <div class="flex items-center justify-between">
+          <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="file-text" class="w-3.5 h-3.5 text-gwen-purple dark:text-spidey-blue"></i>
+            <span>Retrieved Regulatory Filing (SEBI LODR Verified Source Material)</span>
+          </h4>
+          <span class="text-[10px] font-mono text-emerald-600 dark:text-spidey-green font-bold bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded" id="rag-citation-badge">
+            88% Relevance
+          </span>
+        </div>
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-xs font-mono space-y-1">
+          <div class="font-bold text-slate-800 dark:text-slate-200" id="rag-citation-title">
+            Tata Motors Ltd - Q2 FY26 Investor Disclosure & Earnings Transcript
+          </div>
+          <div class="text-[10px] text-blue-600 dark:text-spidey-blue" id="rag-citation-section">
+            Section: Operating Performance & JLR Margins (Page 3)
+          </div>
+          <blockquote class="text-slate-600 dark:text-slate-300 text-[11px] font-sans italic pt-1 border-t border-slate-200 dark:border-slate-800 leading-relaxed" id="rag-citation-quote">
+            "Tata Motors reported a consolidated revenue expansion of 14.8% YoY driven by Jaguar Land Rover (JLR) commercial strength and premium Defender/Range Rover order books. Consolidated EBIT margins improved by 180 bps to 8.6%."
+          </blockquote>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: HEAD-TO-HEAD INVESTMENT DUEL / COMPARE PANEL -->
+    <!-- ========================================================================= -->
+    <div id="tab-content-compare" class="hidden space-y-6">
+      
+      <!-- Compare Selector Bar -->
+      <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+            <i data-lucide="arrow-left-right" class="w-4 h-4 text-gwen-pink dark:text-spidey-blue"></i>
+            <span>Head-to-Head Investment Duel</span>
+          </h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            Compare 2 equities evaluated in parallel through all 4 specialized agents conditioned on your profile.
+          </p>
+        </div>
+
+        <!-- Selectors for Stock A & Stock B -->
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1.5 text-xs font-mono">
+            <span class="font-bold text-slate-400">Asset A:</span>
+            <select id="compare-select-a" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white font-bold text-xs">
+              <!-- Injected via JS -->
+            </select>
+          </div>
+
+          <span class="font-black text-xs text-slate-400 uppercase">VS</span>
+
+          <div class="flex items-center gap-1.5 text-xs font-mono">
+            <span class="font-bold text-slate-400">Asset B:</span>
+            <select id="compare-select-b" class="px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white font-bold text-xs">
+              <!-- Injected via JS -->
+            </select>
+          </div>
+
+          <button onclick="runComparisonDuel()" class="px-4 py-1.5 rounded-xl bg-gwen-pink dark:bg-spidey-red hover:opacity-90 text-white font-bold text-xs transition flex items-center gap-1.5 shadow-md cursor-pointer">
+            <i data-lucide="zap" class="w-3.5 h-3.5"></i>
+            <span>Compare Now</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Comparison Result Columns (Starts Empty as requested) -->
+      <div id="compare-results-container">
+        <div class="p-12 text-center border-2 border-dashed rounded-2xl border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-spidey-card/40 space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-slate-100 dark:bg-spidey-black mx-auto flex items-center justify-center text-slate-400">
+            <i data-lucide="arrow-left-right" class="w-6 h-6"></i>
+          </div>
+          <h4 class="text-sm font-bold text-slate-800 dark:text-slate-200">No Equities Selected for Comparison</h4>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto">
+            Please select Asset A and Asset B from the dropdown menus above, then click <strong>Compare Now</strong> to evaluate both investments side-by-side.
+          </p>
+        </div>
+      </div>
+
+      <!-- Winner / Personalized Summary Banner (Hidden until comparison is run) -->
+      <div id="compare-verdict-banner" class="hidden p-5 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-purple-500/10 to-blue-500/10 border border-gwen-border dark:border-spidey-border text-xs space-y-2">
+        <div class="flex items-center gap-2 text-sm font-bold text-slate-900 dark:text-white">
+          <i data-lucide="award" class="w-4 h-4 text-emerald-500"></i>
+          <span id="compare-verdict-title">Comparative Portfolio Decision</span>
+        </div>
+        <p class="text-slate-600 dark:text-slate-300 leading-relaxed" id="compare-verdict-desc">
+          Run comparison above to determine which asset delivers higher risk-adjusted return for your specific capital and profile.
+        </p>
+      </div>
+
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: SYSTEM RESILIENCE & DEGRADED-DATA STRESS TESTING -->
+    <!-- ========================================================================= -->
+    <div id="tab-content-stress" class="hidden space-y-5">
+      
+      <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-3">
+        <h3 class="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
+          <i data-lucide="shield-alert" class="w-4 h-4 text-amber-500"></i>
+          <span>System Resilience & Degraded Data Stress Testing</span>
+        </h3>
+        <p class="text-xs text-slate-500 dark:text-slate-400">
+          Simulate real-world market stress, data feed drops, missing filings, and conflicting signals without crashing or hallucinating.
+        </p>
+
+        <!-- 4 Scenario Trigger Buttons -->
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 pt-2">
+          <button onclick="setStressScenario('normal')" id="btn-stress-normal" class="p-3 rounded-xl border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-left font-bold text-xs text-emerald-700 dark:text-spidey-green transition cursor-pointer">
+            <div>✓ Normal Live Stream</div>
+            <div class="text-[10px] font-normal opacity-80 mt-0.5">All feeds online & grounded</div>
+          </button>
+          <button onclick="setStressScenario('conflict')" id="btn-stress-conflict" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-spidey-black text-left text-xs text-slate-700 dark:text-slate-300 hover:border-amber-500 transition cursor-pointer">
+            <div class="font-bold">⚡ Conflict (Retail Trap)</div>
+            <div class="text-[10px] opacity-80 mt-0.5">Bull technical vs Bear FII</div>
+          </button>
+          <button onclick="setStressScenario('missing_filing')" id="btn-stress-missing_filing" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-spidey-black text-left text-xs text-slate-700 dark:text-slate-300 hover:border-amber-500 transition cursor-pointer">
+            <div class="font-bold">⚠ Missing SEBI Filing</div>
+            <div class="text-[10px] opacity-80 mt-0.5">Anti-Hallucination Safe Mode</div>
+          </button>
+          <button onclick="setStressScenario('feed_failure')" id="btn-stress-feed_failure" class="p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-spidey-black text-left text-xs text-slate-700 dark:text-slate-300 hover:border-amber-500 transition cursor-pointer">
+            <div class="font-bold">⚠ Feed Disconnected</div>
+            <div class="text-[10px] opacity-80 mt-0.5">Stale snapshot fallback</div>
+          </button>
+        </div>
+
+        <!-- DYNAMIC LIVE SCENARIO IMPACT CARD (Solves static data issue) -->
+        <div id="stress-impact-card" class="p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-3 mt-4 transition-all duration-200">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <div class="flex items-center gap-2">
+              <span id="stress-badge" class="px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-spidey-green border border-emerald-300 dark:border-emerald-700">
+                ✓ Normal Stream Online
+              </span>
+              <span class="text-xs text-slate-500 dark:text-slate-400 font-mono" id="stress-sec-name">Target: TATAMOTORS</span>
+            </div>
+            <div class="text-xs font-mono text-slate-500 dark:text-slate-400">
+              Confidence: <strong id="stress-conf-val" class="text-emerald-600 dark:text-spidey-green font-bold">84%</strong> · Latency: <strong id="stress-lat-val" class="text-slate-800 dark:text-slate-200">28ms</strong>
+            </div>
+          </div>
+
+          <div>
+            <div class="text-[10px] uppercase font-mono text-slate-400 font-bold">The Web Mind Decision Under Stress</div>
+            <div id="stress-verdict-val" class="text-sm font-black font-mono text-emerald-600 dark:text-spidey-green mt-0.5 tracking-tight">
+              GRADUAL STAGGERED ACCUMULATION (SIP)
+            </div>
+          </div>
+
+          <div id="stress-explanation-box" class="p-3 rounded-xl bg-white/80 dark:bg-spidey-black/80 border border-slate-200 dark:border-slate-800 text-xs space-y-1.5">
+            <div class="font-bold text-slate-800 dark:text-slate-200 flex items-center gap-1.5" id="stress-guardrail-title">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i>
+              <span>Full Multi-Agent Consensus</span>
+            </div>
+            <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-[11px]" id="stress-explanation-text">
+              All market and regulatory feeds active. Technical breakout confirmed by fundamental SEBI filing solvency.
+            </p>
+          </div>
+
+          <!-- 4-Agent Real-Time Impact Matrix -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-mono pt-1">
+            <div class="p-2 rounded-lg bg-white/90 dark:bg-spidey-card border border-slate-200 dark:border-slate-800">
+              <div class="text-[10px] text-slate-400">Market Spider</div>
+              <div class="font-bold text-slate-800 dark:text-slate-200 mt-0.5" id="stress-ag-market">BULLISH (+72)</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/90 dark:bg-spidey-card border border-slate-200 dark:border-slate-800">
+              <div class="text-[10px] text-slate-400">Fundamental Web</div>
+              <div class="font-bold text-blue-500 mt-0.5" id="stress-ag-fund">BULLISH (+78)</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/90 dark:bg-spidey-card border border-slate-200 dark:border-slate-800">
+              <div class="text-[10px] text-slate-400">Sentiment Spider</div>
+              <div class="font-bold text-amber-500 mt-0.5" id="stress-ag-sent">BULLISH (+76)</div>
+            </div>
+            <div class="p-2 rounded-lg bg-white/90 dark:bg-spidey-card border border-slate-200 dark:border-slate-800">
+              <div class="text-[10px] text-slate-400">Risk Guardian</div>
+              <div class="font-bold text-purple-500 mt-0.5" id="stress-ag-risk">BULLISH (+65)</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Telemetry Session Log -->
+      <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-3">
+        <h4 class="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-1.5">
+          <i data-lucide="terminal" class="w-3.5 h-3.5 text-blue-500"></i>
+          <span>Session Performance Telemetry (SQLite Persistent Log)</span>
+        </h4>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs font-mono">
+            <thead>
+              <tr class="border-b border-slate-200 dark:border-slate-800 text-slate-400">
+                <th class="pb-2">Time</th>
+                <th class="pb-2">Security</th>
+                <th class="pb-2">Recommendation</th>
+                <th class="pb-2">Confidence</th>
+                <th class="pb-2">HHI Risk</th>
+                <th class="pb-2">Pipeline Latency</th>
+              </tr>
+            </thead>
+            <tbody id="telemetry-log-rows" class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-600 dark:text-slate-300">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: INVESTOR PROFILE ONBOARDING (ZERO DUMMY PRE-DATA) -->
+  <!-- ========================================================================= -->
+  <div id="onboarding-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+    <div class="bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl max-w-md w-full p-6 shadow-2xl space-y-4">
+      
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-gwen-pink dark:bg-spidey-red text-white flex items-center justify-center font-bold">
+            <i data-lucide="user" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white">Investor Profile Setup</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Condition SpiderSense multi-agent research</p>
+          </div>
+        </div>
+        <button onclick="closeProfileModal()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <form id="onboarding-form" class="space-y-3.5 text-xs">
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Your Full Name</label>
+          <input type="text" id="input-name" required placeholder="e.g. Arjun Rao" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition font-sans">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Age (Years)</label>
+            <input type="number" id="input-age" required min="18" max="95" value="30" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition">
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Total Capital (₹)</label>
+            <input type="number" id="input-capital" required min="10000" step="10000" value="500000" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition font-mono">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Risk Appetite</label>
+            <select id="input-risk" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition">
+              <option value="Conservative">Conservative (Capital Preservation)</option>
+              <option value="Moderate" selected>Moderate (Balanced Growth)</option>
+              <option value="Aggressive">Aggressive (Active Momentum)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Investment Horizon</label>
+            <select id="input-horizon" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition">
+              <option value="Short-Term (< 1 Year)">Short-Term (< 1 Year)</option>
+              <option value="Medium-Term (1-3 Years)" selected>Medium-Term (1-3 Years)</option>
+              <option value="Long-Term (3+ Years)">Long-Term (3+ Years)</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-bold text-slate-700 dark:text-slate-300 mb-1">Primary Objective</label>
+          <select id="input-goal" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border text-slate-900 dark:text-white focus:outline-none focus:border-gwen-pink dark:focus:border-spidey-blue transition">
+            <option value="Wealth Creation" selected>Wealth Creation & Compounding</option>
+            <option value="Capital Preservation">Capital Preservation & Dividends</option>
+            <option value="Short-Term Momentum">Short-Term Swing Trading</option>
+          </select>
+        </div>
+
+        <div class="pt-2">
+          <button type="submit" class="w-full py-2.5 rounded-xl bg-gwen-pink dark:bg-spidey-red text-white font-bold text-xs shadow-md hover:opacity-90 transition">
+            Save Profile & Activate Intelligence
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- JAVASCRIPT: CONTROLLER, COMPARISON, MOVING GRAPH & THEMES -->
+  <!-- ========================================================================= -->
+  <script>
+    let currentTicker = "TATAMOTORS";
+    let currentTimeframe = "1D";
+    let activeProfileId = "custom";
+    let activeScenario = "normal";
+    let liveMovingChart = null;
+    let liveMovingInterval = null;
+    let livePriceVal = 1048.50;
+    let watchlist = [];
+    let activeUser = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      initToggleSwitch();
+      lucide.createIcons();
+      initUserProfile();
+      await loadWatchlist();
+      await selectStock(currentTicker);
+      startContinuousGraphStream();
+      initCompareDropdowns();
+      await loadTelemetryLogs();
+    });
+
+    // =========================================================================
+    // 1. SLEEK SWITCH TOGGLE (PIXEL-PERFECT AS PER USER IMAGE)
+    // =========================================================================
+    function initToggleSwitch() {
+      const switchBtn = document.getElementById("theme-toggle-switch");
+      const savedTheme = localStorage.getItem("spidersense_verse_theme") || "dark";
+      applyThemeState(savedTheme);
+
+      switchBtn.addEventListener("click", () => {
+        const isDark = document.documentElement.classList.contains("dark");
+        const nextTheme = isDark ? "light" : "dark";
+        applyThemeState(nextTheme);
+        localStorage.setItem("spidersense_verse_theme", nextTheme);
+        if (liveMovingChart) {
+          loadChartData(currentTicker, currentTimeframe);
+        }
+      });
+    }
+
+    function applyThemeState(theme) {
+      const knob = document.getElementById("theme-knob");
+      if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+        knob.classList.remove("translate-x-7", "bg-black", "text-white");
+        knob.classList.add("translate-x-0", "bg-white", "text-black");
+      } else {
+        document.documentElement.classList.remove("dark");
+        knob.classList.remove("translate-x-0", "bg-white", "text-black");
+        knob.classList.add("translate-x-7", "bg-black", "text-white");
+      }
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 2. USER PROFILE ONBOARDING (ZERO DUMMY PRE-DATA)
+    // =========================================================================
+    function initUserProfile() {
+      const saved = localStorage.getItem("spidersense_active_user");
+      if (!saved) {
+        document.getElementById("onboarding-modal").classList.remove("hidden");
+      } else {
+        try {
+          activeUser = JSON.parse(saved);
+          if (activeUser.name && (activeUser.name.toLowerCase().includes("peter") || activeUser.name.toLowerCase().includes("rohan") || activeUser.name.toLowerCase().includes("parker"))) {
+            localStorage.removeItem("spidersense_active_user");
+            activeUser = null;
+            document.getElementById("onboarding-modal").classList.remove("hidden");
+            return;
+          }
+          applyActiveUserToUI(activeUser);
+          activeProfileId = "custom";
+        } catch (e) {
+          document.getElementById("onboarding-modal").classList.remove("hidden");
+        }
+      }
+    }
+
+    function closeProfileModal() {
+      document.getElementById("onboarding-modal").classList.add("hidden");
+    }
+
+    document.getElementById("btn-open-profile").addEventListener("click", () => {
+      document.getElementById("onboarding-modal").classList.remove("hidden");
+    });
+
+    document.getElementById("onboarding-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        name: document.getElementById("input-name").value.trim(),
+        age: parseInt(document.getElementById("input-age").value),
+        capital_inr: parseFloat(document.getElementById("input-capital").value),
+        risk_tolerance: document.getElementById("input-risk").value,
+        investment_horizon: document.getElementById("input-horizon").value,
+        primary_goal: document.getElementById("input-goal").value
+      };
+
+      try {
+        const res = await fetch("/api/profile/custom", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        activeUser = await res.json();
+        localStorage.setItem("spidersense_active_user", JSON.stringify(activeUser));
+        applyActiveUserToUI(activeUser);
+        closeProfileModal();
+        activeProfileId = "custom";
+        await runAnalysisPipeline();
+      } catch (err) {
+        console.error("Profile save error:", err);
+      }
+    });
+
+    function applyActiveUserToUI(user) {
+      const initials = (user.name || "U").split(" ").map(n => n[0]).join("").substring(0, 2).toUpperCase() || "U";
+      document.getElementById("user-avatar").textContent = initials;
+      document.getElementById("user-name-display").textContent = user.name;
+      document.getElementById("user-stats-display").textContent = `${user.risk_tolerance} · ₹${((user.capital_inr || 500000)/100000).toFixed(1)}L`;
+      document.getElementById("out-guardrail-title").textContent = `Portfolio Guardrail for ${user.name}`;
+    }
+
+    // =========================================================================
+    // 3. WATCHLIST (ALL GROWW EQUITIES WITH LIVE SEARCH)
+    // =========================================================================
+    async function loadWatchlist() {
+      try {
+        const res = await fetch("/api/watchlist");
+        watchlist = await res.json();
+        renderWatchlist(watchlist);
+      } catch (err) {
+        console.error("Watchlist load error:", err);
+      }
+    }
+
+    function renderWatchlist(items) {
+      const container = document.getElementById("groww-watchlist-container");
+      container.innerHTML = "";
+
+      items.forEach(stock => {
+        const isSel = stock.ticker === currentTicker;
+        const isPos = stock.change_pct >= 0;
+
+        const pill = document.createElement("div");
+        pill.className = `flex-shrink-0 px-3.5 py-1.5 rounded-xl border cursor-pointer transition text-xs font-mono ${
+          isSel
+            ? 'bg-pink-50 dark:bg-spidey-blue/20 border-gwen-pink dark:border-spidey-blue shadow-sm'
+            : 'bg-white dark:bg-spidey-card border-gwen-border dark:border-spidey-border hover:border-slate-300 dark:hover:border-slate-600'
+        }`;
+        pill.onclick = () => selectStock(stock.ticker);
+
+        pill.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-900 dark:text-white">${stock.ticker}</span>
+            <span class="font-bold text-[11px] ${isPos ? 'text-emerald-600 dark:text-spidey-green' : 'text-rose-600 dark:text-spidey-red'}">
+              ${isPos ? '+' : ''}${stock.change_pct.toFixed(2)}%
+            </span>
+          </div>
+          <div class="text-[10px] text-slate-500 dark:text-slate-400 mt-0.5" id="strip-price-${stock.ticker}">
+            ₹${stock.price.toFixed(2)}
+          </div>
+        `;
+        container.appendChild(pill);
+      });
+    }
+
+    document.getElementById("watchlist-search").addEventListener("input", (e) => {
+      const q = e.target.value.toLowerCase().trim();
+      const filtered = watchlist.filter(s => s.ticker.toLowerCase().includes(q) || s.company_name.toLowerCase().includes(q));
+      renderWatchlist(filtered);
+    });
+
+    async function selectStock(ticker) {
+      currentTicker = ticker;
+      renderWatchlist(watchlist);
+
+      const quoteRes = await fetch(`/api/quote/${ticker}`);
+      const quote = await quoteRes.json();
+      livePriceVal = quote.price;
+
+      document.getElementById("stock-name").textContent = quote.company_name;
+      document.getElementById("stock-ticker").textContent = quote.ticker;
+      document.getElementById("stock-sector").textContent = quote.sector;
+      document.getElementById("stock-live-price").textContent = `₹${quote.price.toFixed(2)}`;
+
+      const isPos = quote.change_pct >= 0;
+      document.getElementById("stock-change-inr").textContent = `${isPos ? '+' : ''}₹${quote.change_inr.toFixed(2)}`;
+      document.getElementById("stock-change-inr").className = isPos ? "text-emerald-600 dark:text-spidey-green" : "text-rose-600 dark:text-spidey-red";
+      document.getElementById("stock-change-pct").textContent = `(${isPos ? '+' : ''}${quote.change_pct.toFixed(2)}%)`;
+      document.getElementById("stock-change-pct").className = isPos
+        ? "text-emerald-600 dark:text-spidey-green bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded border border-emerald-200 dark:border-emerald-800/60"
+        : "text-rose-600 dark:text-spidey-red bg-rose-50 dark:bg-rose-950/60 px-1.5 py-0.5 rounded border border-rose-200 dark:border-rose-800/60";
+
+      document.getElementById("stat-ema-val").textContent = quote.ema_20.toFixed(1);
+      document.getElementById("val-mcap").textContent = `₹${((quote.market_cap_crores || 100000)/100000).toFixed(2)}L Cr`;
+      document.getElementById("val-pe").textContent = (quote.pe_ratio || 20.0).toFixed(2);
+      document.getElementById("val-beta").textContent = (quote.beta || 1.0).toFixed(2);
+
+      await loadChartData(ticker, currentTimeframe);
+      await runAnalysisPipeline();
+    }
+
+    // =========================================================================
+    // 4. CONTINUOUS MOVING LIVE GRAPH
+    // =========================================================================
+    document.querySelectorAll(".tf-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".tf-btn").forEach(b => b.classList.remove("bg-white", "dark:bg-spidey-card", "text-slate-900", "dark:text-white", "shadow-sm"));
+        btn.classList.add("bg-white", "dark:bg-spidey-card", "text-slate-900", "dark:text-white", "shadow-sm");
+        currentTimeframe = btn.dataset.tf;
+        loadChartData(currentTicker, currentTimeframe);
+      });
+    });
+
+    async function loadChartData(ticker, timeframe) {
+      try {
+        const res = await fetch(`/api/chart/${ticker}?timeframe=${timeframe}`);
+        const data = await res.json();
+        renderChart(data);
+      } catch (err) {
+        console.error("Chart load error:", err);
+      }
+    }
+
+    function renderChart(data) {
+      const ctx = document.getElementById("liveChartCanvas").getContext("2d");
+      const isDark = document.documentElement.classList.contains("dark");
+      
+      const primaryColor = isDark 
+        ? (data.is_positive ? "#00e699" : "#ff3b3b")
+        : (data.is_positive ? "#ff2a85" : "#ef4444");
+
+      const emaColor = isDark ? "#00d2ff" : "#7c3aed";
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, 240);
+      gradient.addColorStop(0, isDark ? "rgba(0, 210, 255, 0.22)" : "rgba(255, 42, 133, 0.22)");
+      gradient.addColorStop(1, "rgba(0, 210, 255, 0.0)");
+
+      if (liveMovingChart) {
+        liveMovingChart.destroy();
+      }
+
+      liveMovingChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: data.labels,
+          datasets: [
+            {
+              label: 'Live Price',
+              data: data.prices,
+              borderColor: primaryColor,
+              backgroundColor: gradient,
+              borderWidth: 2.2,
+              fill: true,
+              tension: 0.2,
+              pointRadius: 0,
+              pointHoverRadius: 4,
+              pointHoverBackgroundColor: primaryColor
+            },
+            {
+              label: '20 EMA',
+              data: data.ema_20,
+              borderColor: emaColor,
+              borderWidth: 1.5,
+              borderDash: [3, 3],
+              fill: false,
+              tension: 0.2,
+              pointRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          animation: { duration: 0 },
+          interaction: { mode: 'index', intersect: false },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: isDark ? '#0e1424' : '#ffffff',
+              titleColor: isDark ? '#94a3b8' : '#64748b',
+              bodyColor: isDark ? '#ffffff' : '#1e1b4b',
+              borderColor: isDark ? '#1c2842' : '#f3e8f8',
+              borderWidth: 1,
+              padding: 8,
+              callbacks: {
+                label: function(ctx) { return `${ctx.dataset.label}: ₹${ctx.parsed.y.toFixed(2)}`; }
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: {
+                color: isDark ? '#64748b' : '#94a3b8',
+                font: { family: 'JetBrains Mono', size: 10 },
+                maxTicksLimit: 7
+              }
+            },
+            y: {
+              grid: { color: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)' },
+              ticks: {
+                color: isDark ? '#64748b' : '#94a3b8',
+                font: { family: 'JetBrains Mono', size: 10 },
+                callback: function(v) { return '₹' + v; }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function startContinuousGraphStream() {
+      if (liveMovingInterval) clearInterval(liveMovingInterval);
+
+      liveMovingInterval = setInterval(() => {
+        if (!liveMovingChart || currentTimeframe !== "1D") return;
+
+        const delta = (Math.random() - 0.48) * 0.45;
+        livePriceVal = Math.max(1, livePriceVal + delta);
+
+        const priceEl = document.getElementById("stock-live-price");
+        priceEl.textContent = `₹${livePriceVal.toFixed(2)}`;
+        priceEl.className = delta >= 0 
+          ? "text-3xl font-black font-mono flash-up text-slate-900 dark:text-white" 
+          : "text-3xl font-black font-mono flash-down text-slate-900 dark:text-white";
+
+        const now = new Date();
+        const label = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
+
+        liveMovingChart.data.labels.push(label);
+        liveMovingChart.data.datasets[0].data.push(Math.round(livePriceVal * 100) / 100);
+        liveMovingChart.data.datasets[1].data.push(Math.round(livePriceVal * 0.995 * 100) / 100);
+
+        if (liveMovingChart.data.labels.length > 26) {
+          liveMovingChart.data.labels.shift();
+          liveMovingChart.data.datasets[0].data.shift();
+          liveMovingChart.data.datasets[1].data.shift();
+        }
+
+        liveMovingChart.update('none');
+
+        const stripP = document.getElementById(`strip-price-${currentTicker}`);
+        if (stripP) stripP.textContent = `₹${livePriceVal.toFixed(2)}`;
+
+      }, 1600);
+    }
+
+    // =========================================================================
+    // 5. THE WEB MIND SYNTHESIS & 4 AGENTS EXECUTION
+    // =========================================================================
+    async function runAnalysisPipeline() {
+      try {
+        const payload = {
+          ticker: currentTicker,
+          profile_id: activeProfileId,
+          simulate_feed_failure: activeScenario === "feed_failure",
+          simulate_missing_filing: activeScenario === "missing_filing",
+          simulate_signal_conflict: activeScenario === "conflict"
+        };
+
+        const res = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        renderSynthesisOutput(data);
+        return data;
+      } catch (err) {
+        console.error("Pipeline error:", err);
+      }
+    }
+
+    function renderSynthesisOutput(data) {
+      // 1. Latency & Confidence (Bug-free)
+      const lat = data.telemetry?.total_pipeline_latency_ms || data.telemetry?.agent_response_latency_ms || 28.5;
+      document.getElementById("out-latency").textContent = `${lat.toFixed(0)}ms`;
+      document.getElementById("out-confidence").textContent = `${data.confidence_pct}% Confidence`;
+
+      // 2. Verdict & Rationale
+      document.getElementById("out-verdict").textContent = data.overall_recommendation;
+      document.getElementById("out-summary").textContent = data.what_conclusion;
+      document.getElementById("out-personalization").textContent = data.personalization_note;
+
+      // 3. Conflict Alert
+      const cBox = document.getElementById("out-conflict-box");
+      if (data.conflicts_detected && data.conflicts_detected.length > 0) {
+        cBox.classList.remove("hidden");
+        const c = data.conflicts_detected[0];
+        document.getElementById("out-conflict-text").textContent = `${c.conflict_nature} [Resolution: ${c.resolution_applied}]`;
+      } else {
+        cBox.classList.add("hidden");
+      }
+
+      // 4. Update the 4 Specialized Individual Agent Panels
+      const outs = data.agent_outputs;
+      if (outs.market_spider) {
+        document.getElementById("ag-market-badge").textContent = `${outs.market_spider.signal} (${outs.market_spider.score > 0 ? '+' : ''}${outs.market_spider.score})`;
+        document.getElementById("ag-market-desc").textContent = outs.market_spider.summary;
+      }
+      if (outs.fundamental_web) {
+        document.getElementById("ag-fund-badge").textContent = `${outs.fundamental_web.signal} (${outs.fundamental_web.score > 0 ? '+' : ''}${outs.fundamental_web.score})`;
+        document.getElementById("ag-fund-desc").textContent = outs.fundamental_web.summary;
+      }
+      if (outs.sentiment_spider) {
+        document.getElementById("ag-sent-badge").textContent = `${outs.sentiment_spider.signal} (${outs.sentiment_spider.score > 0 ? '+' : ''}${outs.sentiment_spider.score})`;
+        document.getElementById("ag-sent-desc").textContent = outs.sentiment_spider.summary;
+      }
+      if (outs.risk_guardian) {
+        document.getElementById("ag-risk-badge").textContent = `${outs.risk_guardian.signal} (${outs.risk_guardian.score > 0 ? '+' : ''}${outs.risk_guardian.score})`;
+        document.getElementById("ag-risk-desc").textContent = outs.risk_guardian.summary;
+      }
+
+      // 5. RAG Regulatory Filing Citation
+      if (data.evidence_chain && data.evidence_chain.length > 0) {
+        const ev = data.evidence_chain[0];
+        document.getElementById("rag-citation-title").textContent = ev.source;
+        document.getElementById("rag-citation-section").textContent = `Section: ${ev.section}`;
+        document.getElementById("rag-citation-badge").textContent = `${(ev.relevance_score * 100).toFixed(0)}% Relevance`;
+        document.getElementById("rag-citation-quote").textContent = `"${ev.excerpt}"`;
+      } else {
+        document.getElementById("rag-citation-title").textContent = "Regulatory Filing Offline";
+        document.getElementById("rag-citation-section").textContent = "Anti-Hallucination Guardrail Active";
+        document.getElementById("rag-citation-badge").textContent = "N/A";
+        document.getElementById("rag-citation-quote").textContent = "No formal SEBI disclosure retrieved. Anti-hallucination safeguard active.";
+      }
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 6. COMPARE PANEL: HEAD-TO-HEAD 2 INVESTMENTS
+    // =========================================================================
+    function initCompareDropdowns() {
+      const selA = document.getElementById("compare-select-a");
+      const selB = document.getElementById("compare-select-b");
+
+      selA.innerHTML = '<option value="" disabled selected>-- Select Asset A --</option>';
+      selB.innerHTML = '<option value="" disabled selected>-- Select Asset B --</option>';
+
+      watchlist.forEach(stock => {
+        const optA = document.createElement("option");
+        optA.value = stock.ticker;
+        optA.textContent = `${stock.ticker} (${stock.company_name.split(' ')[0]})`;
+        selA.appendChild(optA);
+
+        const optB = document.createElement("option");
+        optB.value = stock.ticker;
+        optB.textContent = `${stock.ticker} (${stock.company_name.split(' ')[0]})`;
+        selB.appendChild(optB);
+      });
+    }
+
+    async function runComparisonDuel() {
+      const selA = document.getElementById("compare-select-a");
+      const selB = document.getElementById("compare-select-b");
+      const tickerA = selA.value;
+      const tickerB = selB.value;
+
+      if (!tickerA || !tickerB) {
+        alert("Please select both Asset A and Asset B before comparing.");
+        return;
+      }
+      if (tickerA === tickerB) {
+        alert("Please select two different assets to perform a comparison.");
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/compare?ticker_a=${tickerA}&ticker_b=${tickerB}&profile_id=${activeProfileId}`);
+        const data = await res.json();
+        renderCompareDuelResults(data);
+      } catch (err) {
+        console.error("Comparison error:", err);
+      }
+    }
+
+    function renderCompareDuelResults(data) {
+      const container = document.getElementById("compare-results-container");
+      container.innerHTML = "";
+      container.className = "grid grid-cols-1 md:grid-cols-2 gap-5";
+
+      const sA = data.stock_a;
+      const sB = data.stock_b;
+
+      container.appendChild(createCompareCard(sA, "Asset A"));
+      container.appendChild(createCompareCard(sB, "Asset B"));
+
+      const scoreA = (sA.synthesis.confidence_pct || 70);
+      const scoreB = (sB.synthesis.confidence_pct || 70);
+      const winStock = scoreA >= scoreB ? sA : sB;
+      const otherStock = scoreA >= scoreB ? sB : sA;
+
+      const banner = document.getElementById("compare-verdict-banner");
+      banner.classList.remove("hidden");
+      document.getElementById("compare-verdict-title").textContent = 
+        `SpiderSense Comparative Winner: ${winStock.quote.company_name} (${winStock.quote.ticker})`;
+      
+      document.getElementById("compare-verdict-desc").textContent = 
+        `For ${data.user_profile} (${data.user_risk} Risk Appetite): ${winStock.quote.ticker} offers higher synthesis conviction (${winStock.synthesis.confidence_pct}%) with action "${winStock.synthesis.overall_recommendation}", compared to ${otherStock.quote.ticker} ("${otherStock.synthesis.overall_recommendation}").`;
+
+      lucide.createIcons();
+    }
+
+    function createCompareCard(stockItem, label) {
+      const q = stockItem.quote;
+      const syn = stockItem.synthesis;
+      const isPos = q.change_pct >= 0;
+
+      const card = document.createElement("div");
+      card.className = "bg-white dark:bg-spidey-card border border-gwen-border dark:border-spidey-border rounded-2xl p-5 shadow-sm space-y-4";
+      card.innerHTML = `
+        <div class="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+          <div>
+            <span class="text-[10px] font-mono uppercase font-bold text-slate-400">${label}</span>
+            <h4 class="text-base font-black text-slate-900 dark:text-white">${q.company_name}</h4>
+            <div class="text-xs text-slate-500 dark:text-slate-400 font-mono">${q.ticker} · ${q.sector}</div>
+          </div>
+          <div class="text-right">
+            <div class="text-xl font-mono font-black text-slate-900 dark:text-white">₹${q.price.toFixed(2)}</div>
+            <div class="text-xs font-mono font-bold ${isPos ? 'text-emerald-600 dark:text-spidey-green' : 'text-rose-600 dark:text-spidey-red'}">
+              ${isPos ? '+' : ''}${q.change_pct.toFixed(2)}%
+            </div>
+          </div>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+          <div class="text-[10px] text-slate-400 uppercase font-mono font-bold">Synthesized Recommendation</div>
+          <div class="text-xs font-black text-emerald-600 dark:text-spidey-green font-mono mt-0.5">
+            ${syn.overall_recommendation}
+          </div>
+          <div class="text-[11px] text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
+            ${syn.what_conclusion}
+          </div>
+        </div>
+
+        <div class="space-y-2 text-xs font-mono">
+          <div class="text-[11px] font-bold text-slate-700 dark:text-slate-300 uppercase">4 Agents Performance:</div>
+          <div class="grid grid-cols-2 gap-2 text-[11px]">
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <span class="text-slate-400">Market Spider:</span>
+              <div class="font-bold text-slate-800 dark:text-slate-200">${syn.agent_outputs?.market_spider?.signal || "BULLISH"}</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <span class="text-slate-400">Fundamental Web:</span>
+              <div class="font-bold text-blue-500">${syn.agent_outputs?.fundamental_web?.signal || "BULLISH"}</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <span class="text-slate-400">Sentiment Spider:</span>
+              <div class="font-bold text-amber-500">${syn.agent_outputs?.sentiment_spider?.signal || "BULLISH"}</div>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-50 dark:bg-spidey-black border border-gwen-border dark:border-spidey-border">
+              <span class="text-slate-400">Risk Guardian:</span>
+              <div class="font-bold text-purple-500">${syn.agent_outputs?.risk_guardian?.signal || "BULLISH"}</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-2 border-t border-slate-100 dark:border-slate-800 grid grid-cols-3 gap-2 text-xs font-mono">
+          <div><span class="text-slate-400 text-[10px]">P/E:</span> <strong class="text-slate-800 dark:text-slate-200">${q.pe_ratio}</strong></div>
+          <div><span class="text-slate-400 text-[10px]">Beta:</span> <strong class="text-slate-800 dark:text-slate-200">${q.beta}</strong></div>
+          <div><span class="text-slate-400 text-[10px]">ROE:</span> <strong class="text-emerald-500">${q.roe_pct}%</strong></div>
+        </div>
+      `;
+      return card;
+    }
+
+    // =========================================================================
+    // 7. TAB SWITCHING
+    // =========================================================================
+    function showTab(tabId) {
+      const tabs = ['cockpit', 'compare', 'stress'];
+      tabs.forEach(t => {
+        document.getElementById(`tab-content-${t}`).classList.add("hidden");
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (btn) {
+          btn.className = "px-3.5 py-1.5 rounded-lg text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white transition cursor-pointer";
+        }
+      });
+
+      document.getElementById(`tab-content-${tabId}`).classList.remove("hidden");
+      const activeBtn = document.getElementById(`tab-btn-${tabId}`);
+      if (activeBtn) {
+        activeBtn.className = "px-3.5 py-1.5 rounded-lg bg-white dark:bg-spidey-blue/20 text-gwen-pink dark:text-spidey-blue shadow-sm transition font-bold cursor-pointer";
+      }
+    }
+
+    // =========================================================================
+    // 8. DYNAMIC STRESS TESTING SCENARIOS (LIVE UPDATES)
+    // =========================================================================
+    async function setStressScenario(scen) {
+      activeScenario = scen;
+      const ids = ['normal', 'conflict', 'missing_filing', 'feed_failure'];
+      
+      // Update button visual states
+      ids.forEach(id => {
+        const el = document.getElementById(`btn-stress-${id}`);
+        if (el) {
+          el.className = "p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-spidey-black text-left text-xs text-slate-700 dark:text-slate-300 hover:border-amber-500 transition cursor-pointer";
+        }
+      });
+
+      const activeEl = document.getElementById(`btn-stress-${scen}`);
+      if (activeEl) {
+        activeEl.className = "p-3 rounded-xl border border-emerald-500 bg-emerald-50 dark:bg-emerald-950/40 text-left font-bold text-xs text-emerald-700 dark:text-spidey-green transition cursor-pointer";
+      }
+
+      // Execute live pipeline under this stress configuration
+      const payload = {
+        ticker: currentTicker,
+        profile_id: activeProfileId,
+        simulate_feed_failure: scen === "feed_failure",
+        simulate_missing_filing: scen === "missing_filing",
+        simulate_signal_conflict: scen === "conflict"
+      };
+
+      try {
+        const res = await fetch("/api/analyze", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        // 1. Update the Main Cockpit
+        renderSynthesisOutput(data);
+
+        // 2. Update the Live Stress Impact Panel (immediately visible on this tab!)
+        renderStressImpactPanel(scen, data);
+
+        // 3. Immediately refresh Telemetry Table with the new session!
+        await loadTelemetryLogs();
+
+      } catch (err) {
+        console.error("Stress scenario execution error:", err);
+      }
+    }
+
+    function renderStressImpactPanel(scen, data) {
+      const card = document.getElementById("stress-impact-card");
+      const badge = document.getElementById("stress-badge");
+      const secName = document.getElementById("stress-sec-name");
+      const confVal = document.getElementById("stress-conf-val");
+      const latVal = document.getElementById("stress-lat-val");
+      const verdictVal = document.getElementById("stress-verdict-val");
+      const guardrailTitle = document.getElementById("stress-guardrail-title");
+      const explanationText = document.getElementById("stress-explanation-text");
+      
+      const agMarket = document.getElementById("stress-ag-market");
+      const agFund = document.getElementById("stress-ag-fund");
+      const agSent = document.getElementById("stress-ag-sent");
+      const agRisk = document.getElementById("stress-ag-risk");
+
+      secName.textContent = `Target: ${currentTicker}`;
+      const lat = data.telemetry?.total_pipeline_latency_ms || data.telemetry?.agent_response_latency_ms || 28.5;
+      latVal.textContent = `${lat.toFixed(0)}ms`;
+      confVal.textContent = `${data.confidence_pct}%`;
+      verdictVal.textContent = data.overall_recommendation;
+
+      const outs = data.agent_outputs;
+      if (outs.market_spider) agMarket.textContent = `${outs.market_spider.signal} (${outs.market_spider.score > 0 ? '+' : ''}${outs.market_spider.score})`;
+      if (outs.fundamental_web) agFund.textContent = `${outs.fundamental_web.signal} (${outs.fundamental_web.score > 0 ? '+' : ''}${outs.fundamental_web.score})`;
+      if (outs.sentiment_spider) agSent.textContent = `${outs.sentiment_spider.signal} (${outs.sentiment_spider.score > 0 ? '+' : ''}${outs.sentiment_spider.score})`;
+      if (outs.risk_guardian) agRisk.textContent = `${outs.risk_guardian.signal} (${outs.risk_guardian.score > 0 ? '+' : ''}${outs.risk_guardian.score})`;
+
+      if (scen === "normal") {
+        card.className = "p-4 rounded-xl border border-emerald-500/50 bg-emerald-500/5 dark:bg-emerald-950/20 space-y-3 mt-4 transition-all duration-200";
+        badge.className = "px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-800 dark:text-spidey-green border border-emerald-300 dark:border-emerald-700";
+        badge.textContent = "✓ Normal Live Stream";
+        verdictVal.className = "text-sm font-black font-mono text-emerald-600 dark:text-spidey-green mt-0.5 tracking-tight";
+        guardrailTitle.innerHTML = `<i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-500"></i><span>Full Multi-Agent Consensus</span>`;
+        explanationText.textContent = "All market and regulatory feeds active. Technical breakout confirmed by fundamental SEBI filing solvency.";
+      } 
+      else if (scen === "conflict") {
+        card.className = "p-4 rounded-xl border border-amber-500/60 bg-amber-500/5 dark:bg-amber-950/30 space-y-3 mt-4 transition-all duration-200";
+        badge.className = "px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-amber-100 dark:bg-amber-900/60 text-amber-800 dark:text-amber-300 border border-amber-300 dark:border-amber-700";
+        badge.textContent = "⚡ Conflict Active: Retail Trap Detected";
+        verdictVal.className = "text-sm font-black font-mono text-amber-600 dark:text-amber-400 mt-0.5 tracking-tight";
+        guardrailTitle.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4 text-amber-500"></i><span>Contradiction Safeguard Enforced</span>`;
+        explanationText.textContent = "Technical breakout contradicted by heavy institutional FII net distribution. Web Mind discounted momentum score by 40% and triggered mandatory 2.0% stop-loss guardrail.";
+      } 
+      else if (scen === "missing_filing") {
+        card.className = "p-4 rounded-xl border border-blue-500/60 bg-blue-500/5 dark:bg-blue-950/30 space-y-3 mt-4 transition-all duration-200";
+        badge.className = "px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-blue-100 dark:bg-blue-900/60 text-blue-800 dark:text-blue-300 border border-blue-300 dark:border-blue-700";
+        badge.textContent = "⚠ Missing SEBI Filing: Safe Mode";
+        verdictVal.className = "text-sm font-black font-mono text-blue-600 dark:text-blue-400 mt-0.5 tracking-tight";
+        guardrailTitle.innerHTML = `<i data-lucide="shield-alert" class="w-4 h-4 text-blue-500"></i><span>Anti-Hallucination Safe Mode Active</span>`;
+        explanationText.textContent = "Regulatory filing unavailable for this security. System refuses to hallucinate unverified financial disclosures or guess operating margins. Stance switched to SAFEGUARD WAIT.";
+      } 
+      else if (scen === "feed_failure") {
+        card.className = "p-4 rounded-xl border border-rose-500/60 bg-rose-500/5 dark:bg-rose-950/30 space-y-3 mt-4 transition-all duration-200";
+        badge.className = "px-2.5 py-1 rounded-lg text-xs font-mono font-bold bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-700";
+        badge.textContent = "⚠ Feed Dropped: Stale Fallback";
+        verdictVal.className = "text-sm font-black font-mono text-rose-600 dark:text-rose-400 mt-0.5 tracking-tight";
+        guardrailTitle.innerHTML = `<i data-lucide="clock" class="w-4 h-4 text-rose-500"></i><span>Cached Snapshot Fallback</span>`;
+        explanationText.textContent = "Real-time NSE ticker stream disconnected. System successfully fallen back to cached snapshot from 2 hours prior with active staleness penalty.";
+      }
+
+      lucide.createIcons();
+    }
+
+    async function loadTelemetryLogs() {
+      try {
+        const res = await fetch("/api/telemetry");
+        const data = await res.json();
+        const tbody = document.getElementById("telemetry-log-rows");
+        tbody.innerHTML = "";
+
+        (data.recent_sessions || []).slice(0, 6).forEach((s, idx) => {
+          const tr = document.createElement("tr");
+          tr.className = idx === 0 
+            ? "hover:bg-slate-50 dark:hover:bg-spidey-black/50 bg-emerald-50/40 dark:bg-emerald-950/20 font-bold" 
+            : "hover:bg-slate-50 dark:hover:bg-spidey-black/50";
+          tr.innerHTML = `
+            <td class="py-2 text-slate-400 text-[10px]">${s.timestamp.substring(11, 19)}</td>
+            <td class="py-2 font-bold text-slate-900 dark:text-white">${s.ticker}</td>
+            <td class="py-2 text-emerald-600 dark:text-spidey-green font-bold truncate max-w-[140px]">${s.recommendation}</td>
+            <td class="py-2">${s.confidence_pct}%</td>
+            <td class="py-2 text-purple-500">${s.concentration_hhi}</td>
+            <td class="py-2 text-slate-400">${s.total_latency_ms}ms</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error("Telemetry error:", err);
+      }
+    }
+  </script>
+</body>
+</html>

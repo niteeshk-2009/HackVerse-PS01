@@ -1,0 +1,39 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Local environment & secrets
+.env
+.env.*
+!.env.example
+
+# Local SQLite databases & cache
+*.db
+*.sqlite3
+telemetry_sessions.db
+
+# Executables & large external binaries
+*.exe
+cloudflared.exe
+
+# Logs and telemetry runtime
+*.log
+logs/
+
+# Testing & coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+
+# IDE & OS Metadata
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
