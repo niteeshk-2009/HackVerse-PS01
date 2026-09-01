@@ -7,40 +7,53 @@ Built for **HackVerse: Into the Web (Sprint 1 — Web-Slinger Sprint / Rapid Vib
 **Problem Statement PS-01** · Organized by IEEE Robotics & Automation Society (IEEE RAS), VIT Chennai · TechnoVIT 2026.  
 
 **Official Repository**: [https://github.com/niteeshk-2009/HackVerse-PS01](https://github.com/niteeshk-2009/HackVerse-PS01)  
-**Public Deployment**: N/A — Sprint 1 deployment is optional.
+**Public Deployment**: N/A  
+*The Sprint 1 submission does not include a public application deployment. The application can be run locally using the documented setup instructions below.*  
+**Judge Quickstart**: 📖 **[Read the 2-Minute JUDGE_QUICKSTART.md Guide](JUDGE_QUICKSTART.md)**
 
 ---
 
-## 1. Problem Context
-India's retail investing demographic has witnessed historic expansion: over **130 million retail demat accounts registered**, with **80% under the age of 30**. However, SEBI's official 2024 longitudinal study confirms that **89% of individual retail derivative (F&O) participants lose money**, incurring aggregate annual net losses exceeding ₹52,000 Crores.
+## 1. PS-01 Requirement Coverage
 
-This tragedy is **not a data scarcity problem**. Real-time market tick streams, corporate statutory disclosures (SEBI LODR), and quarterly investor conference call transcripts are freely accessible. Rather, it is a structural **decision-intelligence asymmetry**:
-- Institutional hedge funds deploy parallel multi-analyst desks simultaneously modeling quantitative price anomalies, balance sheet forensics, institutional order flow, and risk concentration.
-- Retail investors are left with raw price charts, social media FOMO, and unverified speculative tips.
+The table below maps every non-negotiable PS-01 requirement directly to the concrete source files, verification tests, and UI locations in this repository. Complete line-by-line traceability is available in **[REQUIREMENTS_TRACEABILITY.md](REQUIREMENTS_TRACEABILITY.md)**.
 
----
-
-## 2. Solution
-**SPIDER SENSE** eliminates this asymmetry. It is an autonomous multi-agent financial intelligence system engineered specifically for retail participants:
-1. **Parallel Multi-Agent Reasoning**: Dispatches 4 distinct specialized analytical agents running concurrently in sub-second time.
-2. **Deterministic Evidence Grounding**: Embeds an in-memory TF-IDF semantic vector RAG engine over authentic SEBI LODR filings and SEC Form 10-Q/10-K regulatory disclosures with exact page, section, and quote citations.
-3. **Retail Trap & Conflict Detection**: Identifies cross-agent contradictions (e.g. price breakouts accompanied by heavy institutional distribution).
-4. **Demonstrable Personalization**: Tailors verdicts, position sizing, and stop-loss bounds dynamically to the investor's specific risk tolerance and portfolio concentration.
-
----
-
-## 3. Why It Is Different
-| Dimension | Traditional Trading / FinTech Apps | SPIDER SENSE (PS-01) |
-|---|---|---|
-| **Analytical Breadth** | Single price chart or black-box rating | **4 Parallel Specialized Agents** (Technicals, RAG Fundamentals, Sentiment, Risk) |
-| **Evidence Grounding** | Generic LLM summaries prone to hallucination | **Authentic Document Corpus** with verifiable page/section quote attribution |
-| **Conflict Resolution** | Ignores contradictions between technicals & flow | **Explicit Cross-Agent Conflict Arbiter** detecting retail distribution traps |
-| **Personalization** | Static advice identical for all users | **Mathematically Divergent Guidance** (Conservative vs Aggressive) on identical inputs |
-| **Degraded Data Handling** | Fails silently or invents numbers | **Strict 3-State Policy** (`LIVE`, `DEMO`, `DATA UNAVAILABLE`) with confidence penalty |
+| PS-01 Requirement | Concrete Implementation | Verification Test | UI Dashboard Location |
+|---|---|---|---|
+| **Multi-Dimensional Financial Signals** | Evaluates Price Momentum (multi-EMA), Volume Anomaly (1.61x surge), and Oscillators (RSI-14) with calibrated confidence & causal reasoning (`agents/market_spider.py`). | `tests/test_system.py` (Test 1) | Market Spider Card (3 dimensional signal pills) |
+| **Specialized Multi-Agent System** | 4 distinct agents (*Market Spider*, *Fundamental Web*, *Sentiment Spider*, *Risk Guardian*) with strict Pydantic output contracts (`agents/base.py`). | `tests/test_system.py` (Test 3) | 4-Agent Inspection Grid |
+| **Parallel Agent Execution** | Dispatches all 4 specialized agents concurrently via Python's `ThreadPoolExecutor(max_workers=4)` (`agents/web_mind.py`). | `tests/test_system.py` (Test 13) | Live Cockpit runtime execution |
+| **Evidence-Grounded RAG** | In-memory TF-IDF semantic vector similarity engine over authentic SEBI LODR corporate filings and SEC Form 10-Q disclosures (`rag/engine.py`, `rag/corpus.py`). | `tests/test_system.py` (Test 2) | Fundamental Web Panel & Master Synthesis Evidence Chain |
+| **Personalization & Profile Divergence** | Onboarding profiler and risk engine producing mathematically divergent verdicts (e.g. SIP accumulation vs Momentum Swing with stop-loss) on identical market input (`profiler/profiles.py`). | `tests/test_system.py` (Test 4) | Top-right Profile Switcher & Tailored Personalization Note |
+| **Cross-Agent Conflict Resolution** | Cross-agent conflict arbiter detecting retail distribution traps (e.g. price breakout vs institutional distribution), discounting scores and enforcing safeguards (`agents/web_mind.py`). | `tests/test_system.py` (Test 5) | Conflict Alert Banner in Master Synthesis |
+| **Portfolio & Risk Analysis (HHI)** | Mathematical Herfindahl-Hirschman Index calculation for portfolio concentration risk and position sizing limits (`profiler/profiles.py`). | `tests/test_system.py` (Test 7, 11) | Risk Guardian Card & Telemetry Drawer |
+| **Graceful Degraded-Data Handling** | Strict 3-state data policy (`LIVE`, `DEMO`, `DATA UNAVAILABLE`); handles feed drops and missing filings without hallucination, penalizing confidence by 40% (`market_data/provider.py`). | `tests/test_system.py` (Test 6, 12) | Stress Testing Tab |
+| **Explainability (5 Core Questions)** | Master synthesis provides explicit answers to: What is happening? Why? What evidence supports it? How confident? What does it mean for this investor? (`agents/web_mind.py`). | `tests/test_system.py` (Test 9) | 5 Master Synthesis Accordion Cards |
+| **Session Performance Telemetry** | SQLite session persistence recording `total_pipeline_latency_ms`, `rag_retrieval_latency_ms`, `portfolio_risk_concentration`, and `signal_agreement_score_pct` (`telemetry/logger.py`). | `tests/test_end_to_end.py` | Latency Readout Badge & `/api/telemetry` |
+| **Cross-Market Comparison Duel** | Head-to-head multi-agent comparison between any two equities across Indian and US markets (`app/main.py`, `static/index.html`). | `tests/test_system.py` (Test 10) | "Compare 2 Stocks" Tab |
 
 ---
 
-## 4. Architecture Overview
+## 2. Why Multi-Agent? (Beyond Single-LLM Wrappers)
+
+Most conventional AI financial tools are **single-prompt LLM wrappers**: they pass a ticker name into a generic language model and ask for a summary. In real-world financial intelligence, this architecture fails because:
+- Language models cannot reliably calculate mathematical portfolio concentration indices ($HHI = \sum w_i^2$).
+- LLMs frequently hallucinate financial figures and corporate quotes when asked for citations.
+- Monolithic prompts cannot disentangle technical price action from institutional order flow, leading to uncritical confirmation bias.
+
+**SPIDER SENSE is a genuine multi-agent system** where specialized agents operate as independent analysts before synthesis:
+1. **Separation of Financial Concerns**:
+   - **Market Spider** performs deterministic technical analysis (multi-EMA alignment, volume anomaly detection, RSI-14 oscillators).
+   - **Fundamental Web** executes semantic vector retrieval over indexed corporate regulatory disclosures (SEBI LODR, SEC 10-Q) with exact page/section provenance.
+   - **Sentiment Spider** tracks institutional order flow forensics (FII net flow vs retail FOMO option chasing).
+   - **Risk Guardian** acts as an independent fiduciary, mathematically evaluating portfolio concentration (HHI) and enforcing position sizing constraints regardless of market hype.
+2. **True Concurrent Execution**: Agents execute in parallel via multi-threading (`ThreadPoolExecutor`), eliminating sequential bottlenecks.
+3. **Structured Contracts**: Every agent outputs a strict Pydantic contract (`AgentOutput`) containing typed signals, normalized scores (-100 to +100), calibrated confidence (0–100%), evidence citations, and identified risks.
+4. **Explicit Conflict Resolution**: When Market Spider detects a bullish breakout but Sentiment Spider reveals heavy institutional distribution (a classic retail trap), **The Spider Mind Orchestrator** detects the contradiction, discounts momentum, and enforces capital protection rules.
+
+---
+
+## 3. Architecture Overview
+
 ```
 RAW FINANCIAL FEEDS (NSE / NASDAQ Equities)  +  REGULATORY CORPUS (SEBI LODR, SEC 10-Q/K)
                                     │
@@ -67,80 +80,29 @@ RAW FINANCIAL FEEDS (NSE / NASDAQ Equities)  +  REGULATORY CORPUS (SEBI LODR, SE
                                     ▼
            INSPECTABLE USER INTELLIGENCE COCKPIT (HTTP 200)
            • Actionable Recommendation (SIP vs Swing vs Wait)
-           • Answers to 5 Core Questions
-           • Exact Regulatory Citations
+           • Answers to 5 Core Investor Questions
+           • Exact Regulatory Citations with Page Provenance
 ```
 
 ---
 
-## 5. Multi-Agent System
-SPIDER SENSE deploys **4 specialized analytical agents** executed concurrently via Python's `ThreadPoolExecutor(max_workers=4)`:
+## 4. Key Features
 
-1. **Market Spider (`agents/market_spider.py`)**:
-   - Evaluates price action across **3 independent dimensions**: Price Momentum (multi-EMA cluster), Volume Anomaly (delivery surge multiplier), and Volatility & Oscillators (RSI-14).
-2. **Fundamental Web (`agents/fundamental_web.py`)**:
-   - Executes semantic vector RAG retrieval over quarterly financial disclosures and risk factors.
-3. **Sentiment Spider (`agents/sentiment_spider.py`)**:
-   - Detects institutional smart-money accumulation vs retail FOMO option chasing.
-4. **Risk Guardian (`agents/risk_guardian.py`)**:
-   - Calculates mathematical portfolio concentration via the **Herfindahl-Hirschman Index (HHI)** and enforces capital protection rules.
-
----
-
-## 6. RAG & Evidence Grounding
-- **Corpus**: Indexed corporate disclosures from listed enterprises across Indian (NSE) and US Global (NASDAQ) equities:
-  - Tata Motors, Reliance Industries, HDFC Bank, Zomato, Infosys, NVIDIA, Apple, Microsoft, Tesla, Alphabet, Amazon.
-- **Provenance Contract**: Every evidence chunk visible to the user retains:
-  - Document Title & Filing Type (e.g. `Tata Motors Ltd - Q2 FY26 Investor Presentation`)
-  - Section & Page Provenance (e.g. `JLR Margin & Commercial EV Ramp (Page 3)`)
-  - Semantic Cosine Relevance Score (e.g. `94% match`)
-  - Verbatim Disclosed Excerpt
-- **Anti-Hallucination Guardrail**: If a filing is missing or query relevance is below threshold, the agent flags `DATA_UNAVAILABLE` and caps confidence at $\le 55\%$, refusing to fabricate figures.
-
----
-
-## 7. Personalization & Behavioral Intelligence
-The system captures the investor's risk profile (Conservative, Moderate, Aggressive, or Custom Onboarding) and portfolio allocation:
-- **Identical Input, Divergent Output**:
-  - For a bullish breakout in `TATAMOTORS`:
-    - **Conservative Investor**: Receives **`GRADUAL STAGGERED ACCUMULATION (SIP)`**, capping sector allocation at 5.0% to safeguard cash buffers.
-    - **Aggressive Investor**: Receives **`MOMENTUM SWING ACCUMULATION`** with a mandatory 2.0% trailing stop-loss.
-
----
-
-## 8. Degraded Data Safety & Truthful Policy
-SPIDER SENSE enforces a strict, truthful 3-state data policy (`agents/base.py`):
-- `LIVE DATA`: Authenticated real-time exchange streaming feed.
-- `DEMO DATA`: Deterministic, reproducible simulation for hackathon verification (explicitly tagged in UI).
-- `DATA UNAVAILABLE`: Explicitly indicated when feeds drop or filings are missing. Confidence is immediately penalized and protective warnings are inserted.
-
----
-
-## 9. Key Features
 - **Fintech Single-Page Cockpit**: Interactive single-page dashboard with instant tab switching (Cockpit, Compare, Stress Testing).
 - **Spider-Man Inspired Dual Themes**:
   - *Dark Theme (Peter Parker)*: Stealth black (`#070a12`), crimson red (`#e62429`), cyan accents (`#00d2ff`).
   - *Light Theme (Gwen Stacy)*: Paper white (`#fcfcfd`), magenta pink (`#ff2a85`), purple border (`#7c3aed`).
 - **Live Continuous Moving Tick Chart**: Streaming price updates and 20 EMA strictly bounded to real-time timestamps.
 - **Cross-Market Comparison Duel**: Side-by-side comparative analysis between Indian and US equities (e.g. `TATAMOTORS` vs `TSLA`).
-- **Telemetry Session Persistence**: SQLite storage recording pipeline latency, RAG latency, HHI concentration, and agreement scores.
+- **Interactive Stress Testing Workbench**: Real-time simulation of signal conflicts, feed drops, and missing filings to verify anti-hallucination safe modes.
+- **Telemetry Session Persistence**: Local SQLite storage recording pipeline latency, RAG latency, HHI concentration, and agreement scores.
 
 ---
 
-## 10. Five Core Investor Questions Answered
-Every synthesized analysis delivers unambiguous answers to:
-1. **WHAT is happening?** Clear directional market diagnosis.
-2. **WHY is it happening?** Causal reasoning across price, volume surge, and institutional flow.
-3. **WHAT evidence supports it?** Verifiable citations from corporate regulatory filings.
-4. **HOW confident is the system?** Calibrated statistical confidence with explicit uncertainty notes.
-5. **WHAT does it mean for THIS investor?** Tailored position bounds and risk suitability.
-
----
-
-## 11. Running Locally (Local Development Only)
+## 5. Running Locally (Local Development Only)
 
 ### Prerequisites
-- Python 3.11+
+- Python 3.11+ (Python 3.11 to 3.13 tested)
 - Git
 
 ### Installation & Launch
@@ -149,7 +111,7 @@ Every synthesized analysis delivers unambiguous answers to:
 git clone https://github.com/niteeshk-2009/HackVerse-PS01.git
 cd HackVerse-PS01
 
-# 2. Install dependencies
+# 2. Install dependencies (minimal: fastapi, uvicorn, pydantic)
 pip install -r requirements.txt
 
 # 3. Launch the Spider Sense application server
@@ -160,7 +122,10 @@ python run.py
 
 ---
 
-## 12. Running Automated Tests
+## 6. Verification & Automated Test Results
+
+The repository includes a comprehensive, non-negotiable acceptance and resilience test suite. Every test runs synchronously against the actual codebase:
+
 ```bash
 # Run acceptance test suite (13 tests covering all PS-01 requirements)
 python -m tests.test_system
@@ -169,79 +134,54 @@ python -m tests.test_system
 python -m tests.test_end_to_end
 ```
 
----
-
-## 13. PS-01 Requirement Mapping
-Complete line-by-line verification is documented in **[REQUIREMENTS_TRACEABILITY.md](REQUIREMENTS_TRACEABILITY.md)**:
-
-| PS-01 Mandate | Source File | Automated Test | Status |
-|---|---|---|---|
-| **Signal Classification ($\ge 3$ Dims)** | `agents/market_spider.py` | `tests/test_system.py` Test 1 | **VERIFIED PASS** |
-| **Evidence-Grounded RAG** | `rag/engine.py`, `rag/corpus.py` | `tests/test_system.py` Test 2 | **VERIFIED PASS** |
-| **Parallel Specialized Agents ($\ge 3$)** | `agents/web_mind.py` | `tests/test_system.py` Test 3, 13 | **VERIFIED PASS** |
-| **Personalization Divergence** | `profiler/profiles.py` | `tests/test_system.py` Test 4 | **VERIFIED PASS** |
-| **Live Interactive Cockpit** | `static/index.html`, `app/main.py` | `tests/test_system.py` Test 10 | **VERIFIED PASS** |
-| **Measurable Telemetry ($\ge 3$ Metrics)**| `telemetry/logger.py` | `tests/test_system.py` Test 7, 11 | **VERIFIED PASS** |
-| **Complete End-to-End Pipeline** | `agents/web_mind.py` | `tests/test_end_to_end.py` | **VERIFIED PASS** |
-| **Degraded Data Handling** | `market_data/provider.py` | `tests/test_system.py` Test 6, 12 | **VERIFIED PASS** |
-
----
-
-## 14. Project Structure
+### Verified Test Results (14/14 Passed, Exit Code 0):
 ```
-HackVerse-PS01/
-├── .github/workflows/
-│   └── tests.yml               # Automated CI test execution on push/PR
-├── agents/
-│   ├── base.py                 # Pydantic data contracts, enums & 3-state data types
-│   ├── market_spider.py        # Technical momentum, volume anomaly & oscillator agent
-│   ├── fundamental_web.py      # Semantic vector RAG & financial filing agent
-│   ├── sentiment_spider.py     # Institutional FII net flow vs retail FOMO agent
-│   ├── risk_guardian.py        # Portfolio concentration HHI & position sizing agent
-│   └── web_mind.py             # The Spider Mind master synthesis & conflict arbiter
-├── app/
-│   └── main.py                 # FastAPI ASGI server, REST endpoints & static routes
-├── market_data/
-│   └── provider.py             # Deterministic NSE/NASDAQ market feeds & quote validation
-├── profiler/
-│   └── profiles.py             # User behavioral profiling, custom onboarding & HHI engine
-├── rag/
-│   ├── corpus.py               # Authentic SEBI LODR & SEC 10-Q/K regulatory document store
-│   └── engine.py               # In-memory TF-IDF semantic vector similarity RAG engine
-├── static/
-│   └── index.html              # Single-page cockpit with Peter/Gwen themes & Chart.js
-├── telemetry/
-│   └── logger.py               # SQLite session latency & concentration metric logger
-├── tests/
-│   ├── test_system.py          # 13 core acceptance, resilience & unit tests
-│   └── test_end_to_end.py      # Full 8-stage end-to-end pipeline test
-├── .env.example                # Safe environment configuration template
-├── .gitignore                  # Exclusion rules for databases, executables & caches
-├── AGENTS.md                   # Formal multi-agent contracts & specifications
-├── ARCHITECTURE.md             # System architecture & design documentation
-├── DATA_SOURCES.md             # Data validation, 3-state policy & equity universe
-├── DECISIONS.md                # Architectural decisions & engineering trade-offs
-├── DEMO.md                     # Judge demonstration playbook
-├── DEPLOYMENT.md               # Production cloud deployment guide & architecture
-├── FINAL_AUDIT.md              # 35-point technical release gate audit report
-├── REQUIREMENTS_TRACEABILITY.md# Full PS-01 requirement-to-file traceability matrix
-├── requirements.txt            # Minimal production Python dependencies
-└── run.py                      # One-click startup script (dynamic PORT & HOST)
+tests/test_system.py:
+  [PASS] Test 1: Signal classification across 3 dimensions
+  [PASS] Test 2: RAG semantic retrieval & source citations
+  [PASS] Test 3: Structured agent output contracts
+  [PASS] Test 4: User profile divergence on identical market inputs
+  [PASS] Test 5: Cross-agent conflict detection & resolution
+  [PASS] Test 6: Degraded data handling without hallucination
+  [PASS] Test 7: Portfolio concentration HHI risk metrics
+  [PASS] Test 8: Data state validation & quality warning checks
+  [PASS] Test 9: Five core questions completeness
+  [PASS] Test 10: HTTP status code semantics (404, 200)
+  [PASS] Test 11: Portfolio HHI calculations across 4 edge cases
+  [PASS] Test 12: Stale data and feed failure handling
+  [PASS] Test 13: Verified concurrent execution of all 4 agents
+
+tests/test_end_to_end.py:
+  [PASS] End-to-end multi-agent pipeline verified successfully!
 ```
+*Continuous Integration: Automated CI execution is configured via `.github/workflows/tests.yml` running on Ubuntu with Python 3.11 on every push and pull request.*
 
 ---
 
-## 15. AI Tools Used
-- **Core Architecture & Modeling**: Designed in pair-programming with Google DeepMind Antigravity Agentic Assistant.
-- **RAG Semantic Embeddings**: Tokenization and TF-IDF cosine similarity engine for deterministic regulatory citation matching.
+## 7. Detailed Documentation Index
+
+| Document | Purpose |
+|---|---|
+| **[JUDGE_QUICKSTART.md](JUDGE_QUICKSTART.md)** | **2-Minute Judge Evaluation Guide** (Purpose, architecture, evaluation steps) |
+| **[REQUIREMENTS_TRACEABILITY.md](REQUIREMENTS_TRACEABILITY.md)** | Complete requirement-to-file traceability matrix for all PS-01 mandates |
+| **[REQUIREMENTS.md](REQUIREMENTS.md)** | Core PS-01 requirements verification audit |
+| **[ARCHITECTURE.md](ARCHITECTURE.md)** | System topology, data flow, and design specifications |
+| **[AGENTS.md](AGENTS.md)** | Formal Pydantic schemas and structured contracts for all 4 agents |
+| **[RAG.md](RAG.md)** | In-memory TF-IDF semantic vector engine and anti-hallucination mechanics |
+| **[DATA_SOURCES.md](DATA_SOURCES.md)** | Strict 3-state data policy and 20-equity universe specifications |
+| **[DECISIONS.md](DECISIONS.md)** | Key architectural decisions and engineering trade-offs |
+| **[TESTING.md](TESTING.md)** | Automated testing methodology and coverage documentation |
+| **[DEMO.md](DEMO.md)** | Presentation walkthrough script for evaluators |
+| **[FINAL_AUDIT.md](FINAL_AUDIT.md)** | 35-point technical release gate audit report |
 
 ---
 
-## 16. Limitations
-1. In default `DEMO` mode, market tick data is simulated deterministically to guarantee reproducible, zero-downtime evaluation during hackathon judging.
-2. The RAG corpus currently covers key listed equities; expanding to the entire NSE 500 would require external vector database infrastructure (e.g. Milvus or pgvector).
+## 8. Limitations & Financial Disclaimer
 
----
+### Disclosed Limitations
+1. In default `DEMO` mode, market tick data is generated deterministically to guarantee reproducible, zero-downtime evaluation during hackathon judging.
+2. The RAG corpus currently covers 20 listed enterprises across Indian and US equities; expanding to the entire NSE 500 would require external vector database infrastructure.
+3. Designed for low-latency interactive analysis with per-agent execution telemetry; actual roundtrip latency depends on the host machine's hardware and network environment.
 
-## 17. Mandatory Financial Disclaimer
+### Mandatory Financial Disclaimer
 *This product provides AI-generated financial intelligence for informational and educational purposes and is not financial advice. Past performance and algorithmic models do not guarantee future market returns. Always consult a SEBI-registered investment advisor before deploying capital.*
