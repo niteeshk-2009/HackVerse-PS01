@@ -17,7 +17,7 @@
 | 2 | **Production Build Succeeds** | Single-page vanilla JS/Tailwind architecture requires no fragile node bundler step. | Static assets load cleanly; CDN dependencies verified. | **PASS** |
 | 3 | **Automated Tests Pass** | Ran `python -m tests.test_system` and `python -m tests.test_end_to_end`. | 14/14 tests passed with exit code 0. | **PASS** |
 | 4 | **API Endpoints Work** | Tested `/api/quote/TATAMOTORS`, `/api/chart/TATAMOTORS`, `/api/analyze`, `/api/compare`, `/api/telemetry`. | All routes return valid typed JSON and expected status codes. | **PASS** |
-| 5 | **Frontend Cockpit Works** | Served dashboard on `http://localhost:8000`. | All panels, charts, tabs, and modals render cleanly. | **PASS** |
+| 5 | **Frontend Cockpit Works** | Served dashboard on local development server. | All panels, charts, tabs, and modals render cleanly. | **PASS** |
 | 6 | **3+ Agents Execute in Parallel** | Inspected `agents/web_mind.py` lines 110-130 using `concurrent.futures.ThreadPoolExecutor(max_workers=4)`. | 4 agents execute concurrently in parallel threads. | **PASS** |
 | 7 | **Structured Agent Contracts Exist** | Inspected `agents/base.py` (`AgentOutput`, `AgentSignal`, `SynthesisOutput`, `TelemetryMetrics`). | Pydantic v2 strict models validate all input/output payloads. | **PASS** |
 | 8 | **RAG Actually Retrieves Evidence** | Tested `rag/engine.py` against query with corporate keywords. | Retrieves relevant chunks from `rag/corpus.py` with score $> 0.5$. | **PASS** |

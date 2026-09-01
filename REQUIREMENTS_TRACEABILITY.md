@@ -83,8 +83,8 @@ This document provides a factual, line-by-line audit mapping every core requirem
   - `static/index.html`
   - `app/main.py` (`/`)
 - **Automated Test**: `tests/test_system.py::test_api_route_semantics`, `tests/test_end_to_end.py`
-- **UI Location**: Entire single-page interface served at `http://localhost:8000/`.
-- **Verification Method**: Start server (`python run.py`) and inspect in browser.
+- **UI Location**: Entire single-page interface served locally via FastAPI (`run.py`).
+- **Verification Method**: Start server (`python run.py`) and inspect in local browser.
 
 ---
 
