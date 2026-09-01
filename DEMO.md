@@ -1,6 +1,6 @@
-# SPY THE MARKET — 60-Second Judge Demonstration Playbook
+# SPIDER SENSE — 60-Second Judge Demonstration Playbook
 
-This guide outlines the optimal demonstration flow for hackathon judges to verify all core capabilities of **SPY THE MARKET (PS-01)** in under 60 seconds.
+This guide outlines the optimal demonstration flow for hackathon judges to verify all core capabilities of **SPIDER SENSE (PS-01)** in under 60 seconds.
 
 ---
 
@@ -21,7 +21,7 @@ This guide outlines the optimal demonstration flow for hackathon judges to verif
 ## Step 1: Hook the Judges (00:00 - 00:15)
 **Say this:**
 > *"Judges, official SEBI study reveals that 89% of retail F&O traders in India lose money. The failure isn't lack of data — NSE ticks, corporate filings, and institutional flows are public. It's an infrastructure gap: hedge funds have parallel multi-analyst teams synthesizing petabytes in seconds, while retail investors get Telegram tips and a price chart.*  
-> *We built **SPY THE MARKET**: an autonomous multi-agent financial intelligence system that brings hedge-fund multi-perspective reasoning to retail investors in real time."*
+> *We built **SPIDER SENSE**: an autonomous multi-agent financial intelligence system that brings hedge-fund multi-perspective reasoning to retail investors in real time."*
 
 ---
 

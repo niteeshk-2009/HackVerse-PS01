@@ -1,4 +1,4 @@
-# SPY THE MARKET — Technical Architecture & Decision Logic
+# SPIDER SENSE — Technical Architecture & Decision Logic
 
 > *"Multi-Agent Autonomous Financial Intelligence for Retail Investors"*
 
@@ -6,7 +6,7 @@
 
 ## 1. System Architecture
 
-SPY THE MARKET is engineered as a loosely coupled, highly deterministic multi-agent pipeline executing over asynchronous concurrent threads:
+SPIDER SENSE is engineered as a loosely coupled, highly deterministic multi-agent pipeline executing over asynchronous concurrent threads:
 
 ```
                   ┌────────────────────────────────────────┐

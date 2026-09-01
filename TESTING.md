@@ -1,9 +1,9 @@
-# SPY THE MARKET — Automated Testing & Verification Suite
+# SPIDER SENSE — Automated Testing & Verification Suite
 
 ---
 
 ## 1. Overview
-The **SPY THE MARKET** test suite (`tests/test_system.py`) verifies all 7 core HackVerse PS-01 minimum requirements plus data integrity, five core questions, and HTTP semantics.
+The **SPIDER SENSE** test suite (`tests/test_system.py`) verifies all 7 core HackVerse PS-01 minimum requirements plus data integrity, five core questions, and HTTP semantics.
 
 ---
 

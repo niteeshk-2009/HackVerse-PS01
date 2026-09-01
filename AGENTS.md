@@ -1,6 +1,6 @@
-# SPY THE MARKET — Agent Specification & Output Contracts
+# SPIDER SENSE — Agent Specification & Output Contracts
 
-All agents in **SPY THE MARKET** implement strictly typed Pydantic contracts, ensuring that agents communicate structured signals rather than unstructured prose.
+All agents in **SPIDER SENSE** implement strictly typed Pydantic contracts, ensuring that agents communicate structured signals rather than unstructured prose.
 
 ---
 

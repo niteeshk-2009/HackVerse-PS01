@@ -15,7 +15,7 @@ sys.path.insert(0, _current_dir)
 
 if __name__ == "__main__":
     print("==================================================================")
-    print("  SPY THE MARKET: AI-Powered Financial Intelligence Platform")
+    print("  SPIDER SENSE: AI-Powered Financial Intelligence Platform")
     print("  IEEE RAS VIT Chennai - HackVerse: Sprint 1 (PS-01)")
     print("==================================================================")
     print("  * Dashboard & Terminal UI: http://localhost:8000")

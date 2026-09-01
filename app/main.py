@@ -1,5 +1,5 @@
 """
-SPY THE MARKET: AI-Powered Financial Intelligence
+SPIDER SENSE: AI-Powered Financial Intelligence
 FastAPI Main Application & REST API Endpoints with strict HTTP semantics.
 """
 
@@ -19,7 +19,7 @@ from spidersense.rag.engine import rag_engine
 from spidersense.telemetry.logger import telemetry_logger
 
 app = FastAPI(
-    title="SPY THE MARKET: AI-Powered Financial Intelligence",
+    title="SPIDER SENSE: AI-Powered Financial Intelligence",
     description="Autonomous Multi-Agent Financial Intelligence Platform for Retail Investors (PS-01)",
     version="2.1.0"
 )
@@ -65,7 +65,7 @@ def health_check():
     provider = provider_manager.get_provider()
     return {
         "status": "healthy",
-        "product": "SPY THE MARKET",
+        "product": "SPIDER SENSE",
         "subtitle": "AI-Powered Financial Intelligence",
         "system": "Multi-Agent Synthesis Engine",
         "agents_active": 4,
@@ -79,7 +79,7 @@ def health_check():
 def get_settings():
     provider = provider_manager.get_provider()
     return {
-        "product_name": "SPY THE MARKET",
+        "product_name": "SPIDER SENSE",
         "subtitle": "AI-Powered Financial Intelligence",
         "data_mode": provider_manager.current_mode,
         "data_state": provider.data_state.value,
@@ -325,9 +325,9 @@ def get_telemetry():
 
 @app.get("/", response_class=HTMLResponse)
 def serve_dashboard():
-    """Serves the SPY THE MARKET interactive fintech cockpit."""
+    """Serves the SPIDER SENSE interactive fintech cockpit."""
     html_path = os.path.join(STATIC_DIR, "index.html")
     if os.path.exists(html_path):
         with open(html_path, "r", encoding="utf-8") as f:
             return HTMLResponse(content=f.read())
-    return HTMLResponse(content="<h1>SPY THE MARKET Dashboard Loading...</h1>")
+    return HTMLResponse(content="<h1>SPIDER SENSE Dashboard Loading...</h1>")

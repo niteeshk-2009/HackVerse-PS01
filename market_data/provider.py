@@ -1,5 +1,5 @@
 """
-SPY THE MARKET: Market Data Provider Layer
+SPIDER SENSE: Market Data Provider Layer
 Production-grade financial data provider with strict 3-state data integrity:
 - LIVE DATA
 - DEMO DATA

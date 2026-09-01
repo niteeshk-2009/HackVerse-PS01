@@ -1,4 +1,4 @@
-# SPY THE MARKET — Architectural Decisions & Trade-Offs
+# SPIDER SENSE — Architectural Decisions & Trade-Offs
 
 > Engineering rationale and decision record for the Multi-Agent Autonomous Financial Intelligence System.
 

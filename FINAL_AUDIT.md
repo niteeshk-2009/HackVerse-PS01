@@ -1,6 +1,6 @@
 # FINAL TECHNICAL REVIEW & AUDIT REPORT
 
-**Project**: SPY THE MARKET / SPIDER-SENSE  
+**Project**: SPIDER SENSE / SPIDER-SENSE  
 **Target Repository**: [https://github.com/niteeshk-2009/HackVerse-PS01](https://github.com/niteeshk-2009/HackVerse-PS01)  
 **Challenge**: HackVerse: Into the Web (Sprint 1 — Web-Slinger Sprint)  
 **Problem Statement**: PS-01 — Multi-Agent Autonomous Financial Intelligence System for Retail Investors  

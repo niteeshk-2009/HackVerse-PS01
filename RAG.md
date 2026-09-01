@@ -1,13 +1,13 @@
-# SPY THE MARKET — Retrieval-Augmented Generation (RAG) Architecture
+# SPIDER SENSE — Retrieval-Augmented Generation (RAG) Architecture
 
 > *"Never fabricate a citation. If evidence does not exist: DATA UNAVAILABLE."*
 
 ---
 
 ## 1. Overview
-The Fundamental Web agent in **SPY THE MARKET** relies on a deterministic, inspectable Semantic RAG pipeline to ground investment claims in authentic regulatory disclosures and corporate filings.
+The Fundamental Web agent in **SPIDER SENSE** relies on a deterministic, inspectable Semantic RAG pipeline to ground investment claims in authentic regulatory disclosures and corporate filings.
 
-Unlike standard LLM-based financial tools that hallucinate balance sheet figures, SPY THE MARKET enforces an **anti-hallucination mandate**: claims must be backed by verifiable document citations containing source title, section reference, page numbers, and exact excerpts.
+Unlike standard LLM-based financial tools that hallucinate balance sheet figures, SPIDER SENSE enforces an **anti-hallucination mandate**: claims must be backed by verifiable document citations containing source title, section reference, page numbers, and exact excerpts.
 
 ---
 

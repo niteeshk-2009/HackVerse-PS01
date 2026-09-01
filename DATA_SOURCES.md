@@ -1,4 +1,4 @@
-# SPY THE MARKET — Data Sources & Integrity Specification
+# SPIDER SENSE — Data Sources & Integrity Specification
 
 > *"Strict 3-State Data Policy: LIVE DATA · DEMO DATA · DATA UNAVAILABLE"*
 
@@ -6,7 +6,7 @@
 
 ## 1. The 3-State Data Policy
 
-SPY THE MARKET enforces strict semantic honesty regarding all data displayed to users:
+SPIDER SENSE enforces strict semantic honesty regarding all data displayed to users:
 
 | State | Definition | UI Visual Label | System Behavior |
 |---|---|---|---|
